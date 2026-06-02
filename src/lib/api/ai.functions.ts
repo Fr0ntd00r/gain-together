@@ -103,7 +103,7 @@ Erstelle ${data.daysPerWeek} Trainings-Tage mit jeweils 5-7 Übungen.`;
         description: day.description,
         created_by: userId,
         is_public: false,
-        difficulty: data.level,
+        difficulty: data.level as "beginner" | "intermediate" | "advanced",
         category: "KI-Plan",
       }).select("id").single();
       if (tErr || !t) continue;
