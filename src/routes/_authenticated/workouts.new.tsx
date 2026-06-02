@@ -64,6 +64,17 @@ function NewWorkout() {
     <div className="space-y-6">
       <h1 className="text-3xl font-extrabold tracking-tight">Workout starten</h1>
 
+      <Link to="/templates" className="flex items-center gap-3 rounded-2xl border border-dashed border-border bg-card p-4 hover:border-primary">
+        <div className="grid h-12 w-12 place-items-center rounded-xl bg-muted"><BookOpen className="h-5 w-5 text-muted-foreground" /></div>
+        <div className="flex-1">
+          <div className="font-bold">Trainingsplan erstellen</div>
+          <div className="text-xs text-muted-foreground">Übungen in Ruhe planen — der Timer startet nicht</div>
+        </div>
+        <span className="text-muted-foreground">›</span>
+      </Link>
+
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Jetzt trainieren</div>
+
       <div className="grid gap-3 sm:grid-cols-2">
         <button onClick={() => go()} disabled={starting !== null}
           className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left hover:border-primary disabled:opacity-50">
