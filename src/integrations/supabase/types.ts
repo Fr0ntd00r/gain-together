@@ -162,6 +162,7 @@ export type Database = {
           created_by: string | null
           equipment: Database["public"]["Enums"]["equipment_type"]
           id: string
+          image_url: string | null
           instructions: string | null
           is_compound: boolean | null
           is_public: boolean | null
@@ -170,12 +171,15 @@ export type Database = {
           secondary_muscles:
             | Database["public"]["Enums"]["muscle_group"][]
             | null
+          setup_notes: string | null
+          tips: string | null
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           equipment: Database["public"]["Enums"]["equipment_type"]
           id?: string
+          image_url?: string | null
           instructions?: string | null
           is_compound?: boolean | null
           is_public?: boolean | null
@@ -184,12 +188,15 @@ export type Database = {
           secondary_muscles?:
             | Database["public"]["Enums"]["muscle_group"][]
             | null
+          setup_notes?: string | null
+          tips?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string | null
           equipment?: Database["public"]["Enums"]["equipment_type"]
           id?: string
+          image_url?: string | null
           instructions?: string | null
           is_compound?: boolean | null
           is_public?: boolean | null
@@ -198,6 +205,8 @@ export type Database = {
           secondary_muscles?:
             | Database["public"]["Enums"]["muscle_group"][]
             | null
+          setup_notes?: string | null
+          tips?: string | null
         }
         Relationships: []
       }
