@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedFriendsRouteImport } from './routes/_authenticated/friends'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -50,6 +51,11 @@ const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFriendsRoute = AuthenticatedFriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
   id: '/feed',
   path: '/feed',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRoute
   '/feed': typeof AuthenticatedFeedRoute
+  '/friends': typeof AuthenticatedFriendsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/templates': typeof AuthenticatedTemplatesRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRoute
   '/feed': typeof AuthenticatedFeedRoute
+  '/friends': typeof AuthenticatedFriendsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/templates': typeof AuthenticatedTemplatesRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exercises': typeof AuthenticatedExercisesRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
+  '/_authenticated/friends': typeof AuthenticatedFriendsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exercises'
     | '/feed'
+    | '/friends'
     | '/history'
     | '/progress'
     | '/templates'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exercises'
     | '/feed'
+    | '/friends'
     | '/history'
     | '/progress'
     | '/templates'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/exercises'
     | '/_authenticated/feed'
+    | '/_authenticated/friends'
     | '/_authenticated/history'
     | '/_authenticated/progress'
     | '/_authenticated/templates'
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/friends': {
+      id: '/_authenticated/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof AuthenticatedFriendsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/feed': {
       id: '/_authenticated/feed'
       path: '/feed'
@@ -247,6 +266,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExercisesRoute: typeof AuthenticatedExercisesRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
+  AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
@@ -258,6 +278,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExercisesRoute: AuthenticatedExercisesRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
+  AuthenticatedFriendsRoute: AuthenticatedFriendsRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
