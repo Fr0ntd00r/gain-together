@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { completeWorkout, getProgressionSuggestion } from "@/lib/api/workouts.functions";
 import { elapsedSeconds, formatDuration } from "@/lib/workout-timer";
-import { Check, Plus, Trash2, Timer, Sparkles, X, Pause, Play, ChevronLeft } from "lucide-react";
+import { Check, Plus, Trash2, Timer, Sparkles, X, Pause, Play, ChevronLeft, SkipForward, Minus, Hourglass } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/workouts/$id")({
@@ -30,6 +30,8 @@ function WorkoutLive() {
   const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<Record<string, any>>({});
+  const [rest, setRest] = useState<{ id: number; seconds: number; label: string } | null>(null);
+  const audioRef = useRef<AudioContext | null>(null);
 
   const { data: workout, refetch: refetchWorkout } = useQuery({
     queryKey: ["workout", id],
@@ -52,6 +54,17 @@ function WorkoutLive() {
     queryFn: async () => {
       const { data } = await supabase.from("exercises").select("id,name,primary_muscle,equipment,is_compound").order("name");
       return (data ?? []) as Exercise[];
+    },
+  });
+
+  // Geplante Pausenzeiten aus der Vorlage (falls dieses Workout aus einer Vorlage gestartet wurde).
+  const { data: restByExercise } = useQuery({
+    queryKey: ["template-rests", workout?.template_id],
+    enabled: !!workout?.template_id,
+    queryFn: async () => {
+      const { data } = await supabase.from("template_exercises")
+        .select("exercise_id,rest_seconds").eq("template_id", workout!.template_id!);
+      return Object.fromEntries((data ?? []).map((r: any) => [r.exercise_id, r.rest_seconds])) as Record<string, number | null>;
     },
   });
 
@@ -99,7 +112,56 @@ function WorkoutLive() {
     await supabase.from("workout_sets").update(patch).eq("id", s.id);
     refetchSets();
   }
-  async function toggleComplete(s: Set) { await updateSet(s, { is_completed: !s.is_completed }); }
+  // Schlägt eine Pausenlänge vor: bevorzugt die in der Vorlage hinterlegte rest_seconds,
+  // sonst nach Übungstyp (Grundübung = länger). Zwischen Übungen etwas mehr als zwischen Sätzen.
+  function suggestRest(exerciseId: string, betweenSets: boolean): { seconds: number; label: string } {
+    const ex = exById[exerciseId];
+    const planned = restByExercise?.[exerciseId] ?? null;
+    if (betweenSets) {
+      const seconds = planned ?? (ex?.is_compound ? 150 : 90);
+      return { seconds, label: "Pause bis zum nächsten Satz" };
+    }
+    const seconds = planned ? planned + 30 : ex?.is_compound ? 210 : 120;
+    return { seconds, label: "Pause bis zur nächsten Übung" };
+  }
+
+  function ensureAudio() {
+    if (audioRef.current) return audioRef.current;
+    const Ctx = (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext | undefined;
+    if (!Ctx) return null;
+    audioRef.current = new Ctx();
+    return audioRef.current;
+  }
+  function startRest(seconds: number, label: string) {
+    ensureAudio()?.resume?.(); // im Klick-Kontext freigeben, damit der Ton später spielt
+    setRest({ id: Date.now(), seconds: Math.max(5, Math.round(seconds)), label });
+  }
+  function playRestCue() {
+    try { navigator.vibrate?.([200, 100, 200]); } catch {}
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const beep = (at: number, freq: number) => {
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.frequency.value = freq; o.connect(g); g.connect(ctx.destination);
+      const t = ctx.currentTime + at;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.3, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      o.start(t); o.stop(t + 0.2);
+    };
+    ctx.resume?.(); beep(0, 880); beep(0.22, 1175);
+  }
+
+  async function toggleComplete(s: Set) {
+    const nowCompleted = !s.is_completed;
+    await updateSet(s, { is_completed: nowCompleted });
+    if (!nowCompleted) return;
+    // Pause vorschlagen: noch offene Sätze derselben Übung? -> Satzpause, sonst Übungspause.
+    const exSets = (sets ?? []).filter(x => x.exercise_id === s.exercise_id);
+    const moreSetsPending = exSets.some(x => x.id !== s.id && !x.is_completed);
+    const { seconds, label } = suggestRest(s.exercise_id, moreSetsPending);
+    startRest(seconds, label);
+  }
   async function deleteSet(s: Set) { await supabase.from("workout_sets").delete().eq("id", s.id); refetchSets(); }
   async function addSet(exerciseId: string) {
     const { data: { user } } = await supabase.auth.getUser();
@@ -247,9 +309,25 @@ function WorkoutLive() {
         );
       })}
 
-      <button onClick={() => setShowAdd(true)} className="w-full rounded-2xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground">
-        + Übung hinzufügen
-      </button>
+      <div className="flex gap-2">
+        <button onClick={() => setShowAdd(true)} className="flex-1 rounded-2xl border-2 border-dashed border-border py-4 text-sm font-medium text-muted-foreground">
+          + Übung hinzufügen
+        </button>
+        <button onClick={() => startRest(90, "Pause")} title="Pause starten"
+          className="flex items-center gap-1.5 rounded-2xl border-2 border-dashed border-border px-4 text-sm font-medium text-muted-foreground">
+          <Hourglass className="h-4 w-4" /> Pause
+        </button>
+      </div>
+
+      {rest && (
+        <RestTimerBar
+          key={rest.id}
+          seconds={rest.seconds}
+          label={rest.label}
+          onDone={playRestCue}
+          onClose={() => setRest(null)}
+        />
+      )}
 
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-background/80 p-0 sm:items-center sm:p-4" onClick={() => setShowAdd(false)}>
@@ -272,6 +350,85 @@ function WorkoutLive() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Schwebende Pausenuhr: zählt die vorgeschlagene Pause runter, mit Pause/Weiter,
+// ±15 s und Überspringen. Beim Ablauf wird onDone (Ton/Vibration) ausgelöst.
+function RestTimerBar({ seconds, label, onDone, onClose }: {
+  seconds: number; label: string; onDone: () => void; onClose: () => void;
+}) {
+  const [total, setTotal] = useState(seconds);
+  const [endsAt, setEndsAt] = useState(() => Date.now() + seconds * 1000);
+  const [paused, setPaused] = useState(false);
+  const [pausedRemaining, setPausedRemaining] = useState(seconds * 1000);
+  const [remaining, setRemaining] = useState(seconds * 1000);
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const tick = () => {
+      const left = endsAt - Date.now();
+      setRemaining(left);
+      if (left <= 0 && !firedRef.current) { firedRef.current = true; onDone(); }
+    };
+    tick();
+    const i = setInterval(tick, 250);
+    return () => clearInterval(i);
+  }, [endsAt, paused, onDone]);
+
+  function adjust(deltaSec: number) {
+    firedRef.current = false;
+    setTotal(t => Math.max(5, t + deltaSec));
+    if (paused) {
+      setPausedRemaining(r => Math.max(0, r + deltaSec * 1000));
+      setRemaining(r => Math.max(0, r + deltaSec * 1000));
+    } else {
+      setEndsAt(e => Math.max(Date.now(), e + deltaSec * 1000));
+    }
+  }
+  function togglePause() {
+    if (paused) { setEndsAt(Date.now() + pausedRemaining); setPaused(false); }
+    else { setPausedRemaining(Math.max(0, remaining)); setPaused(true); }
+  }
+
+  const done = remaining <= 0;
+  const secsLeft = Math.max(0, Math.ceil(remaining / 1000));
+  const pct = Math.max(0, Math.min(100, (remaining / (total * 1000)) * 100));
+
+  return (
+    <div className="fixed inset-x-0 bottom-20 z-40 px-4 md:bottom-6">
+      <div className={`mx-auto max-w-md rounded-2xl border p-3 shadow-glow backdrop-blur ${done ? "border-success bg-success/15" : "border-primary/40 bg-card/95"}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            <Timer className="h-3.5 w-3.5" />
+            {done ? "Pause vorbei – los geht's! 💪" : label}
+          </div>
+          <button onClick={onClose} className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:bg-muted">
+            <SkipForward className="h-3.5 w-3.5" /> {done ? "Schließen" : "Überspringen"}
+          </button>
+        </div>
+
+        {!done && (
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-full rounded-full bg-primary transition-[width] duration-200 ease-linear" style={{ width: `${pct}%` }} />
+          </div>
+        )}
+
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <div className={`text-3xl font-extrabold tabular-nums ${done ? "text-success" : ""}`}>{formatDuration(secsLeft)}</div>
+          {!done && (
+            <div className="flex items-center gap-2">
+              <button onClick={() => adjust(-15)} className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground"><Minus className="h-4 w-4" /></button>
+              <button onClick={togglePause} className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground">
+                {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+              </button>
+              <button onClick={() => adjust(15)} className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground"><Plus className="h-4 w-4" /></button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
