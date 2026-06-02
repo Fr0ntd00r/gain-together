@@ -602,11 +602,14 @@ export type Database = {
       }
       workouts: {
         Row: {
+          accumulated_seconds: number
           created_at: string
           duration_seconds: number | null
           finished_at: string | null
           id: string
           is_completed: boolean | null
+          is_paused: boolean
+          last_resumed_at: string | null
           name: string
           notes: string | null
           started_at: string
@@ -615,11 +618,14 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          accumulated_seconds?: number
           created_at?: string
           duration_seconds?: number | null
           finished_at?: string | null
           id?: string
           is_completed?: boolean | null
+          is_paused?: boolean
+          last_resumed_at?: string | null
           name?: string
           notes?: string | null
           started_at?: string
@@ -628,11 +634,14 @@ export type Database = {
           user_id: string
         }
         Update: {
+          accumulated_seconds?: number
           created_at?: string
           duration_seconds?: number | null
           finished_at?: string | null
           id?: string
           is_completed?: boolean | null
+          is_paused?: boolean
+          last_resumed_at?: string | null
           name?: string
           notes?: string | null
           started_at?: string

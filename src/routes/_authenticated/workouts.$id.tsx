@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { completeWorkout, getProgressionSuggestion } from "@/lib/api/workouts.functions";
-import { Check, Plus, Trash2, Timer, ChevronDown, Sparkles, X } from "lucide-react";
+import { elapsedSeconds, formatDuration } from "@/lib/workout-timer";
+import { Check, Plus, Trash2, Timer, Sparkles, X, Pause, Play, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/workouts/$id")({
@@ -30,7 +31,7 @@ function WorkoutLive() {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<Record<string, any>>({});
 
-  const { data: workout } = useQuery({
+  const { data: workout, refetch: refetchWorkout } = useQuery({
     queryKey: ["workout", id],
     queryFn: async () => {
       const { data } = await supabase.from("workouts").select("*").eq("id", id).maybeSingle();
@@ -54,14 +55,34 @@ function WorkoutLive() {
     },
   });
 
+  const isPaused = !!workout?.is_paused;
+  const isCompleted = !!workout?.is_completed;
+
   useEffect(() => {
     if (!workout) return;
-    const start = new Date(workout.started_at).getTime();
-    const tick = () => setElapsed(Math.floor((Date.now() - start) / 1000));
+    const tick = () => setElapsed(elapsedSeconds(workout));
     tick();
+    if (isPaused || isCompleted) return; // frozen clock while paused/finished
     const i = setInterval(tick, 1000);
     return () => clearInterval(i);
-  }, [workout]);
+  }, [workout, isPaused, isCompleted]);
+
+  async function pause() {
+    if (!workout) return;
+    const banked = elapsedSeconds(workout); // freeze the current elapsed into the bank
+    const { error } = await supabase.from("workouts")
+      .update({ is_paused: true, accumulated_seconds: banked })
+      .eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    await refetchWorkout();
+  }
+  async function resume() {
+    const { error } = await supabase.from("workouts")
+      .update({ is_paused: false, last_resumed_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    await refetchWorkout();
+  }
 
   const grouped = useMemo(() => {
     const map = new Map<string, Set[]>();
@@ -140,17 +161,33 @@ function WorkoutLive() {
   return (
     <div className="space-y-4 pb-32">
       <div className="sticky top-0 z-20 -mx-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-lg font-bold">{workout?.name}</div>
-            <div className="flex gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1"><Timer className="h-3 w-3" />{fmt(elapsed)}</span>
-              <span>{completedSets}/{totalSets} Sätze</span>
-              <span>{Math.round(volume)} kg</span>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <button onClick={() => navigate({ to: "/dashboard" })} title="Zurück (Training läuft weiter)"
+              className="shrink-0 rounded-lg p-2 text-muted-foreground hover:bg-muted"><ChevronLeft className="h-5 w-5" /></button>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <div className="truncate text-lg font-bold">{workout?.name}</div>
+                {isPaused && <span className="shrink-0 rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-500">Pausiert</span>}
+              </div>
+              <div className="flex gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><Timer className="h-3 w-3" />{formatDuration(elapsed)}</span>
+                <span>{completedSets}/{totalSets} Sätze</span>
+                <span>{Math.round(volume)} kg</span>
+              </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button onClick={cancel} className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
+          <div className="flex shrink-0 gap-2">
+            <button onClick={cancel} title="Verwerfen" className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
+            {isPaused ? (
+              <button onClick={resume} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
+                <Play className="h-4 w-4" /> Fortsetzen
+              </button>
+            ) : (
+              <button onClick={pause} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
+                <Pause className="h-4 w-4" /> Pause
+              </button>
+            )}
             <button onClick={finish} className="rounded-lg bg-primary px-4 py-2 font-bold text-primary-foreground">Fertig</button>
           </div>
         </div>
@@ -237,9 +274,4 @@ function WorkoutLive() {
       )}
     </div>
   );
-}
-
-function fmt(s: number) {
-  const m = Math.floor(s / 60); const sec = s % 60;
-  return `${m}:${String(sec).padStart(2, "0")}`;
 }
