@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedExercisesRouteImport } from './routes/_authenticated/exercises'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkoutsNewRouteImport } from './routes/_authenticated/workouts.new'
@@ -49,6 +50,11 @@ const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedExercisesRoute = AuthenticatedExercisesRouteImport.update({
   id: '/exercises',
   path: '/exercises',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRoute
+  '/feed': typeof AuthenticatedFeedRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/templates': typeof AuthenticatedTemplatesRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRoute
+  '/feed': typeof AuthenticatedFeedRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/templates': typeof AuthenticatedTemplatesRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exercises': typeof AuthenticatedExercisesRoute
+  '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/exercises'
+    | '/feed'
     | '/history'
     | '/progress'
     | '/templates'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/exercises'
+    | '/feed'
     | '/history'
     | '/progress'
     | '/templates'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/exercises'
+    | '/_authenticated/feed'
     | '/_authenticated/history'
     | '/_authenticated/progress'
     | '/_authenticated/templates'
@@ -193,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/feed': {
+      id: '/_authenticated/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedFeedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/exercises': {
       id: '/_authenticated/exercises'
       path: '/exercises'
@@ -227,6 +246,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExercisesRoute: typeof AuthenticatedExercisesRoute
+  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
@@ -237,6 +257,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExercisesRoute: AuthenticatedExercisesRoute,
+  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
