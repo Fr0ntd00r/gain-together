@@ -72,7 +72,7 @@ function Sidebar() {
   const desktopItems = [
     { to: "/dashboard", icon: Home, label: "Dashboard" },
     { to: "/workouts/new", icon: Dumbbell, label: "Workout starten" },
-    { to: "/templates", icon: BookOpen, label: "Vorlagen" },
+    { to: "/templates", icon: BookOpen, label: "Trainingspläne" },
     { to: "/history", icon: Activity, label: "Verlauf" },
     { to: "/progress", icon: BarChart3, label: "Fortschritt" },
     { to: "/exercises", icon: Dumbbell, label: "Übungen" },

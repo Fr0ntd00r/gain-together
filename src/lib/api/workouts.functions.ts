@@ -9,7 +9,7 @@ export const getDashboard = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const [profile, recentWorkouts, prs, achievements, totalVolume] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-      supabase.from("workouts").select("id,name,started_at,finished_at,duration_seconds,total_volume,is_completed").eq("user_id", userId).order("started_at", { ascending: false }).limit(5),
+      supabase.from("workouts").select("id,name,started_at,finished_at,duration_seconds,total_volume,is_completed,is_paused,accumulated_seconds,last_resumed_at").eq("user_id", userId).order("started_at", { ascending: false }).limit(5),
       supabase.from("personal_records").select("id,record_type,value,achieved_at,exercise_id, exercises(name)").eq("user_id", userId).order("achieved_at", { ascending: false }).limit(3),
       supabase.from("user_achievements").select("achievement_id, achievements(name,icon,tier)").eq("user_id", userId).order("unlocked_at", { ascending: false }).limit(4),
       supabase.from("workouts").select("total_volume").eq("user_id", userId).eq("is_completed", true),
@@ -20,9 +20,11 @@ export const getDashboard = createServerFn({ method: "GET" })
       const week = Date.now() - 7 * 86400000;
       return d.getTime() > week && w.is_completed;
     }).length;
+    const activeWorkout = (recentWorkouts.data ?? []).find((w: any) => !w.is_completed) ?? null;
     return {
       profile: profile.data,
       recentWorkouts: recentWorkouts.data ?? [],
+      activeWorkout,
       prs: prs.data ?? [],
       achievements: achievements.data ?? [],
       totalVolume: totalVol,
@@ -45,8 +47,9 @@ export const startWorkout = createServerFn({ method: "POST" })
       const { data: te } = await supabase.from("template_exercises").select("*").eq("template_id", templateId).order("position");
       templateExercises = te ?? [];
     }
+    const now = new Date().toISOString();
     const { data: w, error } = await supabase.from("workouts").insert({
-      user_id: userId, name, template_id: templateId, started_at: new Date().toISOString(),
+      user_id: userId, name, template_id: templateId, started_at: now, last_resumed_at: now,
     }).select("id").single();
     if (error || !w) throw new Error(error?.message ?? "Konnte Workout nicht starten");
     // Seed empty sets from template
@@ -78,15 +81,19 @@ export const completeWorkout = createServerFn({ method: "POST" })
     const { data: sets } = await supabase.from("workout_sets").select("*").eq("workout_id", data.workoutId).eq("is_completed", true);
     const completedSets = sets ?? [];
     const totalVolume = completedSets.reduce((s, x: any) => s + Number(x.weight ?? 0) * Number(x.reps ?? 0), 0);
-    const startedAt = new Date(workout.started_at);
     const finishedAt = new Date();
-    const duration = Math.floor((finishedAt.getTime() - startedAt.getTime()) / 1000);
+    // Pause-aware elapsed time: banked seconds + the segment still running (unless paused).
+    const banked = Number(workout.accumulated_seconds ?? 0);
+    const segmentStart = workout.last_resumed_at ? new Date(workout.last_resumed_at) : new Date(workout.started_at);
+    const running = workout.is_paused ? 0 : Math.floor((finishedAt.getTime() - segmentStart.getTime()) / 1000);
+    const duration = Math.max(0, banked + running);
 
     await supabase.from("workouts").update({
       finished_at: finishedAt.toISOString(),
       duration_seconds: duration,
       total_volume: totalVolume,
       is_completed: true,
+      is_paused: false,
     }).eq("id", data.workoutId);
 
     // PR detection per exercise

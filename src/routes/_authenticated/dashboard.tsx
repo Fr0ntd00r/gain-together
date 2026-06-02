@@ -2,9 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getDashboard } from "@/lib/api/workouts.functions";
-import { Flame, Trophy, TrendingUp, Plus, Calendar, Award } from "lucide-react";
+import { elapsedSeconds, formatDuration } from "@/lib/workout-timer";
+import { Flame, Trophy, TrendingUp, Plus, Calendar, Award, Timer, Play, Pause } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — FitForge" }] }),
@@ -35,6 +37,8 @@ function Dashboard() {
         <Stat icon={TrendingUp} label="Volumen" value={`${formatVolume(data.totalVolume)}`} sub="gesamt" />
       </div>
 
+      {data.activeWorkout && <ActiveWorkoutBanner w={data.activeWorkout} />}
+
       <Link to="/workouts/new" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-primary p-5 shadow-glow">
         <div>
           <div className="text-sm font-medium text-primary-foreground/80">Heute</div>
@@ -56,20 +60,26 @@ function Dashboard() {
               Noch keine Workouts. Starte dein erstes!
             </div>
           )}
-          {data.recentWorkouts.map((w: any) => (
-            <div key={w.id} className="rounded-2xl border border-border bg-card p-4">
+          {data.recentWorkouts.map((w: any) => {
+            const inner = (
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-semibold">{w.name}</div>
                   <div className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(w.started_at), { addSuffix: true, locale: de })}</div>
                 </div>
                 <div className="text-right text-xs text-muted-foreground">
-                  {w.duration_seconds ? `${Math.round(w.duration_seconds / 60)} min` : "läuft…"}<br />
-                  {Number(w.total_volume).toLocaleString("de-DE")} kg
+                  {w.is_completed
+                    ? <>{w.duration_seconds ? `${Math.round(w.duration_seconds / 60)} min` : "—"}<br />{Number(w.total_volume).toLocaleString("de-DE")} kg</>
+                    : <span className="font-semibold text-primary">{w.is_paused ? "pausiert · fortsetzen ›" : "läuft · öffnen ›"}</span>}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+            return w.is_completed ? (
+              <div key={w.id} className="rounded-2xl border border-border bg-card p-4">{inner}</div>
+            ) : (
+              <Link key={w.id} to="/workouts/$id" params={{ id: w.id }} className="block rounded-2xl border border-primary/40 bg-card p-4 hover:border-primary">{inner}</Link>
+            );
+          })}
         </div>
       </section>
 
@@ -104,6 +114,34 @@ function Dashboard() {
         </section>
       )}
     </div>
+  );
+}
+
+function ActiveWorkoutBanner({ w }: { w: any }) {
+  const [elapsed, setElapsed] = useState(() => elapsedSeconds(w));
+  useEffect(() => {
+    setElapsed(elapsedSeconds(w));
+    if (w.is_paused) return;
+    const i = setInterval(() => setElapsed(elapsedSeconds(w)), 1000);
+    return () => clearInterval(i);
+  }, [w]);
+  return (
+    <Link to="/workouts/$id" params={{ id: w.id }}
+      className="flex items-center justify-between gap-3 rounded-2xl border border-primary bg-primary/10 p-5 shadow-glow">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 text-sm font-medium text-primary">
+          {w.is_paused ? "Pausiertes Training" : "Aktives Training"}
+          {w.is_paused && <Pause className="h-3.5 w-3.5" />}
+        </div>
+        <div className="truncate text-xl font-bold">{w.name}</div>
+        <div className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
+          <Timer className="h-3.5 w-3.5" />{formatDuration(elapsed)}
+        </div>
+      </div>
+      <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
+        <Play className="h-6 w-6" />
+      </div>
+    </Link>
   );
 }
 
