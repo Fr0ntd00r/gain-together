@@ -254,6 +254,90 @@ export type Database = {
           },
         ]
       }
+      schedule_settings: {
+        Row: {
+          anchor_date: string
+          cycle_length: number
+          mode: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anchor_date?: string
+          cycle_length?: number
+          mode?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anchor_date?: string
+          cycle_length?: number
+          mode?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      schedule_rules: {
+        Row: {
+          id: string
+          mode: string
+          slot_index: number
+          template_id: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          mode: string
+          slot_index: number
+          template_id?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          mode?: string
+          slot_index?: number
+          template_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scheduled_workouts: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          note: string | null
+          status: string
+          template_id: string | null
+          updated_at: string
+          user_id: string
+          workout_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          note?: string | null
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id: string
+          workout_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id?: string
+          workout_id?: string | null
+        }
+        Relationships: []
+      }
       feed_comments: {
         Row: {
           content: string

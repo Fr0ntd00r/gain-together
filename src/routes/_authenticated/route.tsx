@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Dumbbell, BarChart3, Users, Trophy, User, LogOut, BookOpen, Activity } from "lucide-react";
+import { Home, Dumbbell, BarChart3, Users, Trophy, User, LogOut, BookOpen, Activity, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -75,6 +75,7 @@ function Sidebar() {
     { to: "/dashboard", icon: Home, label: "Dashboard" },
     { to: "/workouts/new", icon: Dumbbell, label: "Workout starten" },
     { to: "/templates", icon: BookOpen, label: "Trainingspläne" },
+    { to: "/schedule", icon: CalendarDays, label: "Kalender" },
     { to: "/history", icon: Activity, label: "Verlauf" },
     { to: "/progress", icon: BarChart3, label: "Fortschritt" },
     { to: "/exercises", icon: Dumbbell, label: "Übungen" },
