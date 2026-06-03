@@ -96,6 +96,9 @@ export const completeWorkout = createServerFn({ method: "POST" })
       is_paused: false,
     }).eq("id", data.workoutId);
 
+    // Verknüpften Kalendertag (falls aus dem Plan gestartet) als erledigt markieren.
+    await supabase.from("scheduled_workouts").update({ status: "done" }).eq("workout_id", data.workoutId);
+
     // PR detection per exercise
     const byExercise = new Map<string, any[]>();
     for (const s of completedSets) {
