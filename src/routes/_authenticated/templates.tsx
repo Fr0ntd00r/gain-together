@@ -16,6 +16,7 @@ export const Route = createFileRoute("/_authenticated/templates")({
 type PlanRow = {
   position: number; exercise_id: string;
   target_sets: number; target_reps: number; target_weight: number | null;
+  notes: string | null;
 };
 
 function Templates() {
@@ -175,17 +176,18 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
         setCategory(t.category ?? ""); setDifficulty((t.difficulty as any) ?? "beginner");
       }
       const { data: te } = await supabase.from("template_exercises")
-        .select("exercise_id,position,target_sets,target_reps,target_weight").eq("template_id", templateId).order("position");
+        .select("exercise_id,position,target_sets,target_reps,target_weight,notes").eq("template_id", templateId).order("position");
       setRows((te ?? []).map((r: any) => ({
         position: r.position, exercise_id: r.exercise_id,
         target_sets: r.target_sets ?? 3, target_reps: r.target_reps ?? 10, target_weight: r.target_weight,
+        notes: r.notes ?? null,
       })));
       setLoading(false);
     })();
   }, [templateId, isNew]);
 
   function addExercise(exerciseId: string) {
-    setRows(r => [...r, { position: r.length, exercise_id: exerciseId, target_sets: 3, target_reps: 10, target_weight: null }]);
+    setRows(r => [...r, { position: r.length, exercise_id: exerciseId, target_sets: 3, target_reps: 10, target_weight: null, notes: null }]);
     setPickerOpen(false); setSearch("");
   }
   function patchRow(i: number, patch: Partial<PlanRow>) {
@@ -227,6 +229,7 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
           rows.map((r, idx) => ({
             template_id: id!, exercise_id: r.exercise_id, position: idx,
             target_sets: r.target_sets, target_reps: r.target_reps, target_weight: r.target_weight,
+            notes: r.notes?.trim() || null,
           }))
         );
         if (error) throw error;
@@ -300,8 +303,6 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
                         </div>
                       </div>
                       <div className="flex shrink-0 items-center gap-1">
-                        <button onClick={() => { const ex = exById[row.exercise_id]; if (ex) setDetail({ exercise: ex, editing: false }); }}
-                          title="Bild & Hinweise" className="rounded p-1 text-muted-foreground hover:bg-muted"><Info className="h-3.5 w-3.5" /></button>
                         <button onClick={() => move(i, -1)} className="rounded p-1 text-muted-foreground hover:bg-muted"><ChevronUp className="h-3.5 w-3.5" /></button>
                         <button onClick={() => move(i, 1)} className="rounded p-1 text-muted-foreground hover:bg-muted"><ChevronDown className="h-3.5 w-3.5" /></button>
                         <button onClick={() => removeRow(i)} className="rounded p-1 text-muted-foreground hover:bg-muted"><Trash2 className="h-3.5 w-3.5" /></button>
@@ -312,6 +313,15 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
                       <NumField label="Wdh" value={row.target_reps} onChange={v => patchRow(i, { target_reps: v })} />
                       <NumField label="kg" value={row.target_weight} onChange={v => patchRow(i, { target_weight: v })} allowEmpty />
                     </div>
+                    <input
+                      value={row.notes ?? ""}
+                      onChange={e => patchRow(i, { notes: e.target.value })}
+                      placeholder="Notiz für diesen Plan (optional, z.B. langsam senken)"
+                      className="mt-2 w-full rounded-lg border border-border bg-input px-3 py-2 text-xs" />
+                    <button onClick={() => { const ex = exById[row.exercise_id]; if (ex) setDetail({ exercise: ex, editing: false }); }}
+                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-border py-1.5 text-xs text-muted-foreground hover:bg-muted">
+                      <Info className="h-3.5 w-3.5" /> Bild & Hinweise zur Übung
+                    </button>
                   </div>
                 ))}
               </div>
