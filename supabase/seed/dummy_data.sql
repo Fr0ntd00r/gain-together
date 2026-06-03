@@ -66,14 +66,18 @@ BEGIN
   UPDATE public.profiles SET goal='strength',        experience='intermediate'                                                                       WHERE id=u4;
   UPDATE public.profiles SET goal='endurance',       experience='beginner'                                                                          WHERE id=u5;
 
-  -- 2) Freundschaften
-  INSERT INTO public.friendships (requester_id, addressee_id, status) VALUES
-    (u1, me, 'accepted'),
-    (u2, me, 'accepted'),
-    (u3, me, 'accepted'),
-    (u4, me, 'pending'),   -- eingehende Anfrage  -> in der App annehmen/ablehnen
-    (me, u5, 'pending')    -- ausgehende Anfrage  -> in der App abbrechen
-  ON CONFLICT (requester_id, addressee_id) DO NOTHING;
+  -- 2) Freundschaften – mit JEDEM echten Account verknüpfen (account-unabhängig,
+  --    damit es unabhängig davon klappt, mit welchem Account du eingeloggt bist).
+  DELETE FROM public.friendships WHERE requester_id = ANY(alldummies) OR addressee_id = ANY(alldummies);
+  FOR f IN SELECT id FROM auth.users WHERE COALESCE(email,'') NOT LIKE '%@dummy.fitforge' LOOP
+    INSERT INTO public.friendships (requester_id, addressee_id, status) VALUES
+      (u1, f, 'accepted'),
+      (u2, f, 'accepted'),
+      (u3, f, 'accepted'),
+      (u4, f, 'pending'),   -- eingehende Anfrage  -> in der App annehmen/ablehnen
+      (f, u5, 'pending')    -- ausgehende Anfrage  -> in der App abbrechen
+    ON CONFLICT (requester_id, addressee_id) DO NOTHING;
+  END LOOP;
 
   -- 3) Dynamische Daten der Dummys zurücksetzen (für saubere Wiederholung)
   DELETE FROM public.activity_feed     WHERE user_id = ANY(alldummies);
