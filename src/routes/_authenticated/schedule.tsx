@@ -264,9 +264,12 @@ function SchedulePage() {
 
   async function startFromEntry(entry: Scheduled) {
     if (!entry.template_id) { toast.error("Kein Plan für diesen Tag."); return; }
+    // Bereits gestartetes (noch nicht abgeschlossenes) Workout fortsetzen statt neu anzulegen.
+    if (entry.workout_id) { navigate({ to: "/workouts/$id", params: { id: entry.workout_id } }); return; }
     try {
       const r = await start({ data: { templateId: entry.template_id } });
-      await supabase.from("scheduled_workouts").update({ workout_id: r.workoutId, status: "done" }).eq("id", entry.id);
+      // Nur verknüpfen — als "erledigt" wird der Tag erst beim Abschluss des Workouts markiert.
+      await supabase.from("scheduled_workouts").update({ workout_id: r.workoutId }).eq("id", entry.id);
       refresh();
       navigate({ to: "/workouts/$id", params: { id: r.workoutId } });
     } catch (e: any) { toast.error(e.message); }
@@ -281,6 +284,7 @@ function EntryLabel({ entry, tplName }: { entry: Scheduled; tplName: Record<stri
       ) : (
         <span className="flex items-center gap-1 text-sm text-muted-foreground"><Coffee className="h-3.5 w-3.5" /> Ruhetag</span>
       )}
+      {entry.workout_id && entry.status !== "done" && <span className="shrink-0 rounded bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-primary">läuft</span>}
       {entry.status === "done" && <span className="shrink-0 rounded bg-success/20 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-success">erledigt</span>}
       {entry.status === "skipped" && <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase text-muted-foreground">übersprungen</span>}
     </div>
@@ -355,7 +359,7 @@ function DayActions({ dateKey, entry, suggestion, templates, tplName, occupiedDa
         {entry?.template_id && entry.status !== "done" && (
           <button onClick={() => onStart(entry)} disabled={busy}
             className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-bold text-primary-foreground disabled:opacity-50">
-            <Play className="h-4 w-4" /> Training starten
+            <Play className="h-4 w-4" /> {entry.workout_id ? "Training fortsetzen" : "Training starten"}
           </button>
         )}
 

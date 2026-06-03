@@ -44,9 +44,12 @@ function Dashboard() {
 
   async function startToday() {
     if (!todayPlan?.template_id) return;
+    // Bereits gestartetes Workout fortsetzen statt neu anzulegen.
+    if (todayPlan.workout_id) { navigate({ to: "/workouts/$id", params: { id: todayPlan.workout_id } }); return; }
     try {
       const r = await start({ data: { templateId: todayPlan.template_id } });
-      await supabase.from("scheduled_workouts").update({ workout_id: r.workoutId, status: "done" }).eq("id", todayPlan.id);
+      // Nur verknüpfen — "erledigt" wird erst beim Abschluss des Workouts gesetzt.
+      await supabase.from("scheduled_workouts").update({ workout_id: r.workoutId }).eq("id", todayPlan.id);
       qc.invalidateQueries({ queryKey: ["schedule-today"] });
       navigate({ to: "/workouts/$id", params: { id: r.workoutId } });
     } catch (e: any) { toast.error(e.message); }
@@ -78,7 +81,7 @@ function Dashboard() {
       {hasPlannedToday && (
         <button onClick={startToday} className="flex w-full items-center justify-between gap-3 rounded-2xl bg-gradient-primary p-5 text-left shadow-glow">
           <div className="min-w-0">
-            <div className="text-sm font-medium text-primary-foreground/80">Heute geplant</div>
+            <div className="text-sm font-medium text-primary-foreground/80">{todayPlan!.workout_id ? "Heute · Training läuft" : "Heute geplant"}</div>
             <div className="truncate text-xl font-bold text-primary-foreground">{todayPlan!.name}</div>
           </div>
           <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary-foreground/15">
