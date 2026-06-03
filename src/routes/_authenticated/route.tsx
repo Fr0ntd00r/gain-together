@@ -27,7 +27,8 @@ function AuthLayout() {
 
 const navItems = [
   { to: "/dashboard", icon: Home, label: "Home" },
-  { to: "/workouts/new", icon: Dumbbell, label: "Train" },
+  { to: "/templates", icon: BookOpen, label: "Pläne" },
+  { to: "/workouts/new", icon: Dumbbell, label: "Start" },
   { to: "/feed", icon: Activity, label: "Feed" },
   { to: "/progress", icon: BarChart3, label: "Progress" },
   { to: "/profile", icon: User, label: "Profil" },
