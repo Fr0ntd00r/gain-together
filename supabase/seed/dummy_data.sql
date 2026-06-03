@@ -25,10 +25,18 @@ BEGIN
   accepted   := ARRAY[u1,u2,u3];
   alldummies := ARRAY[u1,u2,u3,u4,u5];
 
+  -- Deinen Account finden: zuerst per E-Mail (hier ggf. eintragen),
+  -- sonst automatisch der älteste echte (Nicht-Dummy-)Account.
   SELECT id INTO me FROM auth.users WHERE lower(email) = lower('alltimegaminghd@gmail.com') LIMIT 1;
   IF me IS NULL THEN
-    RAISE EXCEPTION 'Account alltimegaminghd@gmail.com nicht gefunden – bitte zuerst in der App registrieren/einloggen.';
+    SELECT id INTO me FROM auth.users
+     WHERE COALESCE(email,'') NOT LIKE '%@dummy.fitforge'
+     ORDER BY created_at ASC LIMIT 1;
   END IF;
+  IF me IS NULL THEN
+    RAISE EXCEPTION 'Kein Account gefunden – bitte zuerst in der App registrieren/einloggen.';
+  END IF;
+  RAISE NOTICE 'Dummy-Daten werden mit Account % verknüpft.', (SELECT email FROM auth.users WHERE id = me);
 
   SELECT array_agg(id) INTO ex FROM (SELECT id FROM public.exercises ORDER BY name LIMIT 6) q;
   IF ex IS NULL THEN RAISE EXCEPTION 'Keine Übungen in public.exercises gefunden.'; END IF;
