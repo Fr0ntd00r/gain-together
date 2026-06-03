@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ImagePlus, Pencil, X, Loader2, Plus } from "lucide-react";
+import { ImagePlus, X, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { ExerciseDetail, type Exercise } from "@/components/exercise-detail";
 
 export const Route = createFileRoute("/_authenticated/exercises")({
   head: () => ({ meta: [{ title: "Übungen — FitForge" }] }),
@@ -13,12 +14,6 @@ export const Route = createFileRoute("/_authenticated/exercises")({
 const MUSCLES = ["all","chest","back","shoulders","biceps","triceps","quads","hamstrings","glutes","calves","core","full_body","cardio"];
 const MUSCLE_OPTIONS = ["chest","back","shoulders","biceps","triceps","forearms","quads","hamstrings","glutes","calves","core","full_body","cardio"];
 const EQUIPMENT_OPTIONS = ["barbell","dumbbell","machine","cable","bodyweight","kettlebell","bands","cardio_machine","other"];
-
-type Exercise = {
-  id: string; name: string; primary_muscle: string; equipment: string;
-  is_compound: boolean; instructions: string | null; tips: string | null;
-  setup_notes: string | null; image_url: string | null; created_by: string | null;
-};
 
 function ExercisesPage() {
   const qc = useQueryClient();
@@ -41,7 +36,19 @@ function ExercisesPage() {
     },
   });
 
+  // Persönliche Notizen/Bilder des Nutzers, um sie in der Liste über die offizielle Übung zu legen.
+  const { data: notes } = useQuery({
+    queryKey: ["exercise-notes", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.from("exercise_user_notes")
+        .select("exercise_id,image_url,instructions").eq("user_id", userId!);
+      return Object.fromEntries((data ?? []).map((n: any) => [n.exercise_id, n])) as Record<string, any>;
+    },
+  });
+
   const filtered = (data ?? []).filter(e => e.name.toLowerCase().includes(q.toLowerCase()));
+  const noteFor = (id: string) => notes?.[id];
 
   return (
     <div className="space-y-4">
@@ -62,33 +69,39 @@ function ExercisesPage() {
         ))}
       </div>
       <div className="space-y-2">
-        {filtered.map(e => (
-          <button key={e.id} onClick={() => { setSelected(e); setEditing(false); }}
-            className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3 text-left hover:border-primary">
-            {e.image_url ? (
-              <img src={e.image_url} alt={e.name} className="h-14 w-14 shrink-0 rounded-lg object-cover" />
-            ) : (
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground">
-                <ImagePlus className="h-5 w-5" />
+        {filtered.map(e => {
+          const n = noteFor(e.id);
+          const img = (n?.image_url ?? null) || e.image_url;
+          const instr = (n?.instructions ?? null) || e.instructions;
+          return (
+            <button key={e.id} onClick={() => { setSelected(e); setEditing(false); }}
+              className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3 text-left hover:border-primary">
+              {img ? (
+                <img src={img} alt={e.name} className="h-14 w-14 shrink-0 rounded-lg object-cover" />
+              ) : (
+                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground">
+                  <ImagePlus className="h-5 w-5" />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-medium">{e.name}</div>
+                <div className="text-[10px] uppercase text-muted-foreground">{e.primary_muscle} · {e.equipment} {e.is_compound && "· compound"}</div>
+                {instr && <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{instr}</p>}
               </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <div className="truncate font-medium">{e.name}</div>
-              <div className="text-[10px] uppercase text-muted-foreground">{e.primary_muscle} · {e.equipment} {e.is_compound && "· compound"}</div>
-              {e.instructions && <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{e.instructions}</p>}
-            </div>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
 
       {selected && (
         <ExerciseDetail
+          key={selected.id}
           exercise={selected}
           userId={userId}
           editing={editing}
           onEdit={() => setEditing(true)}
           onClose={() => { setSelected(null); setEditing(false); }}
-          onSaved={async () => { await qc.invalidateQueries({ queryKey: ["exercises"] }); setEditing(false); const { data } = await supabase.from("exercises").select("*").eq("id", selected.id).maybeSingle(); if (data) setSelected(data as Exercise); }}
+          onSaved={async () => { setEditing(false); await qc.invalidateQueries({ queryKey: ["exercise-notes"] }); }}
         />
       )}
 
@@ -184,145 +197,6 @@ function CreateExercise({ userId, onClose, onCreated }: {
           </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onSaved }: {
-  exercise: Exercise; userId: string | null; editing: boolean;
-  onEdit: () => void; onClose: () => void; onSaved: () => void;
-}) {
-  const canEdit = !!userId && exercise.created_by === userId; // only owner can edit
-  const [instructions, setInstructions] = useState(exercise.instructions ?? "");
-  const [setupNotes, setSetupNotes] = useState(exercise.setup_notes ?? "");
-  const [tips, setTips] = useState(exercise.tips ?? "");
-  const [imageUrl, setImageUrl] = useState(exercise.image_url);
-  const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  async function handleUpload(file: File) {
-    if (!userId) return;
-    setUploading(true);
-    try {
-      const ext = file.name.split(".").pop() ?? "jpg";
-      const path = `${userId}/${exercise.id}-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("exercise-images").upload(path, file, { upsert: true });
-      if (upErr) throw upErr;
-      const { data: signed, error: sErr } = await supabase.storage.from("exercise-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-      if (sErr) throw sErr;
-      setImageUrl(signed.signedUrl);
-      toast.success("Bild hochgeladen");
-    } catch (e: any) {
-      toast.error(e.message);
-    } finally { setUploading(false); }
-  }
-
-  async function save() {
-    setSaving(true);
-    try {
-      const { error } = await supabase.from("exercises").update({
-        instructions: instructions || null,
-        setup_notes: setupNotes || null,
-        tips: tips || null,
-        image_url: imageUrl,
-      }).eq("id", exercise.id);
-      if (error) throw error;
-      toast.success("Gespeichert");
-      onSaved();
-    } catch (e: any) {
-      toast.error(e.message);
-    } finally { setSaving(false); }
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-background/80 sm:items-center sm:p-4" onClick={onClose}>
-      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-3xl border border-border bg-card sm:rounded-3xl" onClick={e => e.stopPropagation()}>
-        <div className="relative">
-          {imageUrl ? (
-            <img src={imageUrl} alt={exercise.name} className="h-56 w-full object-cover" />
-          ) : (
-            <div className="grid h-40 w-full place-items-center bg-muted text-muted-foreground">
-              <div className="text-center">
-                <ImagePlus className="mx-auto h-8 w-8" />
-                <div className="mt-1 text-xs">Kein Bild</div>
-              </div>
-            </div>
-          )}
-          <button onClick={onClose} className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/80 backdrop-blur">
-            <X className="h-4 w-4" />
-          </button>
-          {editing && canEdit && (
-            <label className="absolute bottom-3 right-3 flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
-              {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
-              {uploading ? "Lädt…" : "Bild ändern"}
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleUpload(e.target.files[0])} />
-            </label>
-          )}
-        </div>
-
-        <div className="space-y-4 p-5">
-          <div>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-bold">{exercise.name}</h2>
-                <div className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {exercise.primary_muscle} · {exercise.equipment} {exercise.is_compound && "· compound"}
-                </div>
-              </div>
-              {!editing && canEdit && (
-                <button onClick={onEdit} className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs">
-                  <Pencil className="h-3 w-3" /> Bearbeiten
-                </button>
-              )}
-            </div>
-          </div>
-
-          {editing ? (
-            <div className="space-y-3">
-              <Field label="Ausführung" value={instructions} onChange={setInstructions} placeholder="Wie wird die Übung korrekt ausgeführt?" />
-              <Field label="Maschinen-Einstellung / Setup" value={setupNotes} onChange={setSetupNotes} placeholder="z.B. Sitzhöhe Loch 4, Polster auf Schienbeinhöhe…" />
-              <Field label="Tipps & Hinweise" value={tips} onChange={setTips} placeholder="z.B. Ellbogen eng am Körper, langsam senken…" />
-              <div className="flex gap-2 pt-1">
-                <button onClick={save} disabled={saving} className="flex-1 rounded-xl bg-primary py-2.5 font-medium text-primary-foreground disabled:opacity-60">
-                  {saving ? "Speichert…" : "Speichern"}
-                </button>
-                <button onClick={onClose} className="rounded-xl border border-border px-4">Abbrechen</button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <Section title="Ausführung" content={exercise.instructions} />
-              <Section title="Maschinen-Einstellung / Setup" content={exercise.setup_notes} />
-              <Section title="Tipps & Hinweise" content={exercise.tips} />
-              {!exercise.instructions && !exercise.setup_notes && !exercise.tips && (
-                <div className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-                  Noch keine Hinweise. Klicke auf „Bearbeiten" um welche hinzuzufügen.
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
-  return (
-    <div>
-      <label className="mb-1 block text-xs font-medium text-muted-foreground">{label}</label>
-      <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={3}
-        className="w-full rounded-xl border border-border bg-input px-3 py-2 text-sm" />
-    </div>
-  );
-}
-
-function Section({ title, content }: { title: string; content: string | null }) {
-  if (!content) return null;
-  return (
-    <div>
-      <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</div>
-      <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
     </div>
   );
 }

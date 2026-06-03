@@ -210,6 +210,50 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_user_notes: {
+        Row: {
+          created_at: string
+          exercise_id: string
+          id: string
+          image_url: string | null
+          instructions: string | null
+          setup_notes: string | null
+          tips: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exercise_id: string
+          id?: string
+          image_url?: string | null
+          instructions?: string | null
+          setup_notes?: string | null
+          tips?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exercise_id?: string
+          id?: string
+          image_url?: string | null
+          instructions?: string | null
+          setup_notes?: string | null
+          tips?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_user_notes_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feed_comments: {
         Row: {
           content: string
