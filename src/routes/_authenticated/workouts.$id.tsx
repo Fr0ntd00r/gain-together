@@ -267,34 +267,37 @@ function WorkoutLive() {
   return (
     <div className="space-y-4 pb-32">
       <div className="sticky top-0 z-20 -mx-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2">
-            <button onClick={() => navigate({ to: "/dashboard" })} title="Zurück (Training läuft weiter)"
-              className="shrink-0 rounded-lg p-2 text-muted-foreground hover:bg-muted"><ChevronLeft className="h-5 w-5" /></button>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="truncate text-lg font-bold">{workout?.name}</div>
-                {isPaused && <span className="shrink-0 rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-500">Pausiert</span>}
-              </div>
-              <div className="flex gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><Timer className="h-3 w-3" />{formatDuration(elapsed)}</span>
-                <span>{completedSets}/{totalSets} Sätze</span>
-                <span>{Math.round(volume)} kg</span>
-              </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <button onClick={() => navigate({ to: "/dashboard" })} title="Zurück (Training läuft weiter)"
+                className="shrink-0 rounded-lg p-2 text-muted-foreground hover:bg-muted"><ChevronLeft className="h-5 w-5" /></button>
+              <div className="truncate text-lg font-bold">{workout?.name}</div>
+              {isPaused && <span className="shrink-0 rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase text-amber-500">Pausiert</span>}
+            </div>
+            <div className="flex shrink-0 gap-2">
+              {isPaused ? (
+                <button onClick={resume} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
+                  <Play className="h-4 w-4" /> Fortsetzen
+                </button>
+              ) : (
+                <button onClick={pause} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
+                  <Pause className="h-4 w-4" /> Pause
+                </button>
+              )}
+              <button onClick={finish} className="rounded-lg bg-primary px-4 py-2 font-bold text-primary-foreground">Fertig</button>
             </div>
           </div>
-          <div className="flex shrink-0 gap-2">
-            <button onClick={() => setConfirmCancel(true)} title="Training abbrechen" className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
-            {isPaused ? (
-              <button onClick={resume} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
-                <Play className="h-4 w-4" /> Fortsetzen
-              </button>
-            ) : (
-              <button onClick={pause} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
-                <Pause className="h-4 w-4" /> Pause
-              </button>
-            )}
-            <button onClick={finish} className="rounded-lg bg-primary px-4 py-2 font-bold text-primary-foreground">Fertig</button>
+          <div className="flex items-center justify-between gap-2 pl-1">
+            <div className="flex min-w-0 gap-4 text-xs text-muted-foreground">
+              <span className="flex shrink-0 items-center gap-1"><Timer className="h-3 w-3" />{formatDuration(elapsed)}</span>
+              <span className="shrink-0">{completedSets}/{totalSets} Sätze</span>
+              <span className="shrink-0">{Math.round(volume)} kg</span>
+            </div>
+            <button onClick={() => setConfirmCancel(true)}
+              className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-destructive hover:bg-destructive/10">
+              <X className="h-3.5 w-3.5" /> Abbrechen
+            </button>
           </div>
         </div>
       </div>
