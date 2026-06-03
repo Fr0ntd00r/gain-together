@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { completeWorkout, getProgressionSuggestion } from "@/lib/api/workouts.functions";
 import { elapsedSeconds, formatDuration } from "@/lib/workout-timer";
-import { Check, Plus, Trash2, Timer, Sparkles, X, Pause, Play, ChevronLeft, SkipForward, Minus, Hourglass } from "lucide-react";
+import { Check, Plus, Trash2, Timer, Sparkles, X, Pause, Play, ChevronLeft, SkipForward, Minus, Hourglass, Info, StickyNote, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/workouts/$id")({
@@ -18,7 +18,10 @@ type Set = {
   position: number; set_number: number; reps: number | null; weight: number | null;
   rpe: number | null; is_warmup: boolean; is_completed: boolean;
 };
-type Exercise = { id: string; name: string; primary_muscle: string; equipment: string; is_compound: boolean };
+type Exercise = {
+  id: string; name: string; primary_muscle: string; equipment: string; is_compound: boolean;
+  instructions: string | null; setup_notes: string | null; tips: string | null; image_url: string | null;
+};
 
 function WorkoutLive() {
   const { id } = Route.useParams();
@@ -52,21 +55,44 @@ function WorkoutLive() {
   const { data: allExercises } = useQuery({
     queryKey: ["all-exercises"],
     queryFn: async () => {
-      const { data } = await supabase.from("exercises").select("id,name,primary_muscle,equipment,is_compound").order("name");
+      const { data } = await supabase.from("exercises")
+        .select("id,name,primary_muscle,equipment,is_compound,instructions,setup_notes,tips,image_url").order("name");
       return (data ?? []) as Exercise[];
     },
   });
 
-  // Geplante Pausenzeiten aus der Vorlage (falls dieses Workout aus einer Vorlage gestartet wurde).
-  const { data: restByExercise } = useQuery({
-    queryKey: ["template-rests", workout?.template_id],
+  // Geplante Pausenzeiten + Plan-Notizen aus der Vorlage (falls dieses Workout aus einer Vorlage gestartet wurde).
+  const { data: templateMeta } = useQuery({
+    queryKey: ["template-meta", workout?.template_id],
     enabled: !!workout?.template_id,
     queryFn: async () => {
       const { data } = await supabase.from("template_exercises")
-        .select("exercise_id,rest_seconds").eq("template_id", workout!.template_id!);
-      return Object.fromEntries((data ?? []).map((r: any) => [r.exercise_id, r.rest_seconds])) as Record<string, number | null>;
+        .select("exercise_id,rest_seconds,notes").eq("template_id", workout!.template_id!);
+      return (data ?? []) as { exercise_id: string; rest_seconds: number | null; notes: string | null }[];
     },
   });
+  const restByExercise = useMemo(
+    () => Object.fromEntries((templateMeta ?? []).map(r => [r.exercise_id, r.rest_seconds])) as Record<string, number | null>,
+    [templateMeta],
+  );
+  const planNoteByExercise = useMemo(
+    () => Object.fromEntries((templateMeta ?? []).map(r => [r.exercise_id, r.notes])) as Record<string, string | null>,
+    [templateMeta],
+  );
+
+  // Persönliche Notizen/Bilder des Nutzers (überlagern die offiziellen Übungsangaben).
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => { supabase.auth.getUser().then(r => setUserId(r.data.user?.id ?? null)); }, []);
+  const { data: userNotes } = useQuery({
+    queryKey: ["exercise-notes", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.from("exercise_user_notes")
+        .select("exercise_id,instructions,setup_notes,tips,image_url").eq("user_id", userId!);
+      return Object.fromEntries((data ?? []).map((n: any) => [n.exercise_id, n])) as Record<string, any>;
+    },
+  });
+  const [openInfo, setOpenInfo] = useState<Record<string, boolean>>({});
 
   const isPaused = !!workout?.is_paused;
   const isCompleted = !!workout?.is_completed;
@@ -107,6 +133,17 @@ function WorkoutLive() {
   }, [sets]);
 
   const exById = useMemo(() => Object.fromEntries((allExercises ?? []).map(e => [e.id, e])), [allExercises]);
+
+  // Zusammengeführte Infos je Übung: persönliche Notiz/Bild, sonst offizielle Angabe.
+  function infoFor(exId: string) {
+    const ex = exById[exId]; const n = userNotes?.[exId];
+    return {
+      image: (n?.image_url ?? null) || ex?.image_url || null,
+      instructions: (n?.instructions ?? null) || ex?.instructions || null,
+      setup: (n?.setup_notes ?? null) || ex?.setup_notes || null,
+      tips: (n?.tips ?? null) || ex?.tips || null,
+    };
+  }
 
   async function updateSet(s: Set, patch: Partial<Set>) {
     await supabase.from("workout_sets").update(patch).eq("id", s.id);
@@ -264,14 +301,51 @@ function WorkoutLive() {
       {grouped.map(([exerciseId, exSets]) => {
         const ex = exById[exerciseId];
         const sug = suggestions[exerciseId];
+        const info = infoFor(exerciseId);
+        const planNote = planNoteByExercise[exerciseId];
+        const hasInfo = !!(info.instructions || info.setup || info.tips || info.image);
+        const infoOpen = !!openInfo[exerciseId];
         return (
           <div key={exerciseId} className="rounded-2xl border border-border bg-card p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <div>
-                <div className="font-bold">{ex?.name ?? "Übung"}</div>
-                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{ex?.primary_muscle}</div>
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-3">
+                {info.image && (
+                  <img src={info.image} alt="" onClick={() => setOpenInfo(o => ({ ...o, [exerciseId]: !o[exerciseId] }))}
+                    className="h-12 w-12 shrink-0 cursor-pointer rounded-lg object-cover" />
+                )}
+                <div className="min-w-0">
+                  <div className="truncate font-bold">{ex?.name ?? "Übung"}</div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{ex?.primary_muscle}</div>
+                </div>
               </div>
+              {hasInfo && (
+                <button onClick={() => setOpenInfo(o => ({ ...o, [exerciseId]: !o[exerciseId] }))}
+                  className={`flex shrink-0 items-center gap-1 rounded-lg border px-2 py-1 text-xs ${infoOpen ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>
+                  <Info className="h-3.5 w-3.5" /> Info
+                </button>
+              )}
             </div>
+
+            {planNote && (
+              <div className="mb-2 flex items-start gap-2 rounded-lg border border-border bg-muted/60 p-2 text-xs">
+                <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <span><span className="font-semibold">Plan-Notiz:</span> {planNote}</span>
+              </div>
+            )}
+
+            {infoOpen && hasInfo && (
+              <div className="mb-2 space-y-2 rounded-lg border border-border bg-background p-3">
+                {info.image ? (
+                  <img src={info.image} alt={ex?.name ?? ""} className="max-h-56 w-full rounded-lg object-cover" />
+                ) : (
+                  <div className="grid h-24 w-full place-items-center rounded-lg bg-muted text-muted-foreground"><ImagePlus className="h-6 w-6" /></div>
+                )}
+                <InfoSection title="Ausführung" content={info.instructions} />
+                <InfoSection title="Maschinen-Einstellung / Setup" content={info.setup} />
+                <InfoSection title="Tipps & Hinweise" content={info.tips} />
+              </div>
+            )}
+
             {sug?.suggestion && (
               <div className="mb-2 flex items-start gap-2 rounded-lg bg-primary/10 p-2 text-xs">
                 <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary mt-0.5" />
@@ -350,6 +424,16 @@ function WorkoutLive() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function InfoSection({ title, content }: { title: string; content: string | null }) {
+  if (!content) return null;
+  return (
+    <div>
+      <div className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{title}</div>
+      <p className="whitespace-pre-wrap text-xs leading-relaxed">{content}</p>
     </div>
   );
 }
