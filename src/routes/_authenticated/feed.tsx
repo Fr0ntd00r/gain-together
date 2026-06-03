@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Trophy, Dumbbell, Award, Flame } from "lucide-react";
+import { Heart, MessageCircle, Trophy, Dumbbell, Award, Flame, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
 import { useState } from "react";
@@ -52,11 +52,17 @@ function Feed() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-extrabold tracking-tight">Feed</h1>
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-3xl font-extrabold tracking-tight">Feed</h1>
+        <Link to="/friends" className="flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium">
+          <Users className="h-4 w-4" /> Freunde
+        </Link>
+      </div>
       {(feed ?? []).length === 0 && (
-        <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+        <Link to="/friends" className="block rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground hover:border-primary">
           Folge Freunden, um ihren Fortschritt zu sehen.
-        </div>
+          <span className="mt-2 flex items-center justify-center gap-1.5 font-medium text-primary"><Users className="h-4 w-4" /> Freunde finden &amp; hinzufügen</span>
+        </Link>
       )}
       {(feed ?? []).map((item: any) => (
         <FeedItem key={item.id} item={item} likes={likeCounts?.[item.id]} onToggle={toggleLike} />

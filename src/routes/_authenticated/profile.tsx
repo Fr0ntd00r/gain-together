@@ -1,9 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Flame, Trophy, Dumbbell } from "lucide-react";
+import { LogOut, Flame, Trophy, Dumbbell, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profil — FitForge" }] }),
@@ -68,11 +68,16 @@ function Profile() {
 
   return (
     <div className="space-y-6">
-      <header className="flex items-center justify-between">
+      <header className="flex items-center justify-between gap-2">
         <h1 className="text-3xl font-extrabold tracking-tight">Profil</h1>
-        <button onClick={logout} className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground">
-          <LogOut className="h-3.5 w-3.5" /> Abmelden
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <Link to="/friends" className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs font-medium">
+            <Users className="h-3.5 w-3.5" /> Freunde
+          </Link>
+          <button onClick={logout} className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground">
+            <LogOut className="h-3.5 w-3.5" /> Abmelden
+          </button>
+        </div>
       </header>
 
       <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
