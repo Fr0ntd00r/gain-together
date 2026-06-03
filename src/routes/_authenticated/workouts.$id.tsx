@@ -31,6 +31,7 @@ function WorkoutLive() {
   const getSuggestion = useServerFn(getProgressionSuggestion);
   const [elapsed, setElapsed] = useState(0);
   const [showAdd, setShowAdd] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<Record<string, any>>({});
   const [rest, setRest] = useState<{ id: number; seconds: number; label: string } | null>(null);
@@ -248,9 +249,15 @@ function WorkoutLive() {
     } catch (e: any) { toast.error(e.message); }
   }
   async function cancel() {
-    if (!confirm("Workout verwerfen?")) return;
-    await supabase.from("workouts").delete().eq("id", id);
-    navigate({ to: "/dashboard" });
+    try {
+      // Verknüpften Kalendertag wieder auf "geplant" zurücksetzen (workout_id wird per FK auf NULL gesetzt).
+      await supabase.from("scheduled_workouts").update({ status: "planned" }).eq("workout_id", id);
+      // Workout verwerfen: Sätze werden per ON DELETE CASCADE entfernt; zählt damit in keiner Wertung.
+      const { error } = await supabase.from("workouts").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Training abgebrochen – nicht gewertet");
+      navigate({ to: "/dashboard" });
+    } catch (e: any) { toast.error(e.message); }
   }
 
   const completedSets = (sets ?? []).filter(s => s.is_completed).length;
@@ -277,7 +284,7 @@ function WorkoutLive() {
             </div>
           </div>
           <div className="flex shrink-0 gap-2">
-            <button onClick={cancel} title="Verwerfen" className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
+            <button onClick={() => setConfirmCancel(true)} title="Training abbrechen" className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
             {isPaused ? (
               <button onClick={resume} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-sm font-medium">
                 <Play className="h-4 w-4" /> Fortsetzen
@@ -401,6 +408,21 @@ function WorkoutLive() {
           onDone={playRestCue}
           onClose={() => setRest(null)}
         />
+      )}
+
+      {confirmCancel && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-background/80 p-0 sm:items-center sm:p-4" onClick={() => setConfirmCancel(false)}>
+          <div className="w-full max-w-sm rounded-t-3xl border border-border bg-card p-5 sm:rounded-3xl" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold">Training abbrechen?</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Das Training wird verworfen und geht in <span className="font-medium text-foreground">keine Wertung</span> ein (kein Volumen, keine PRs, kein Streak). Diese Aktion kann nicht rückgängig gemacht werden.
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button onClick={() => setConfirmCancel(false)} className="flex-1 rounded-xl border border-border py-2.5 font-medium">Weiter trainieren</button>
+              <button onClick={() => { setConfirmCancel(false); cancel(); }} className="flex-1 rounded-xl bg-destructive py-2.5 font-bold text-destructive-foreground">Abbrechen & verwerfen</button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showAdd && (
