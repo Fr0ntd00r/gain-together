@@ -192,7 +192,7 @@ function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onSaved }:
   exercise: Exercise; userId: string | null; editing: boolean;
   onEdit: () => void; onClose: () => void; onSaved: () => void;
 }) {
-  const canEdit = !!userId; // any authenticated user can contribute notes/image
+  const canEdit = !!userId && exercise.created_by === userId; // only owner can edit
   const [instructions, setInstructions] = useState(exercise.instructions ?? "");
   const [setupNotes, setSetupNotes] = useState(exercise.setup_notes ?? "");
   const [tips, setTips] = useState(exercise.tips ?? "");
