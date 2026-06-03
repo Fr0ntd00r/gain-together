@@ -29,7 +29,8 @@ const navItems = [
   { to: "/dashboard", icon: Home, label: "Home" },
   { to: "/templates", icon: BookOpen, label: "Pläne" },
   { to: "/workouts/new", icon: Dumbbell, label: "Start" },
-  { to: "/feed", icon: Activity, label: "Feed" },
+  { to: "/exercises", icon: Activity, label: "Übungen" },
+  { to: "/feed", icon: Users, label: "Feed" },
   { to: "/progress", icon: BarChart3, label: "Progress" },
   { to: "/profile", icon: User, label: "Profil" },
 ] as const;
@@ -37,11 +38,11 @@ const navItems = [
 function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur md:hidden">
-      <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-md items-center justify-around px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {navItems.map(({ to, icon: Icon, label }) => (
           <Link
             key={to} to={to}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-2 py-2 text-xs text-muted-foreground"
+            className="flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-1 py-2 text-[11px] text-muted-foreground"
             activeProps={{ className: "text-primary" }}
           >
             <Icon className="h-5 w-5" />
