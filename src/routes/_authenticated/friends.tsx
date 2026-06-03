@@ -23,10 +23,16 @@ function Friends() {
     queryKey: ["friendships"],
     enabled: !!me,
     queryFn: async () => {
-      const { data } = await supabase.from("friendships")
-        .select("*, requester:profiles!friendships_requester_id_fkey(username,display_name,avatar_url), addressee:profiles!friendships_addressee_id_fkey(username,display_name,avatar_url)")
+      const { data: rows } = await supabase.from("friendships").select("*")
         .or(`requester_id.eq.${me!.id},addressee_id.eq.${me!.id}`);
-      return data ?? [];
+      const list = rows ?? [];
+      const ids = Array.from(new Set(list.flatMap((f: any) => [f.requester_id, f.addressee_id])));
+      let byId: Record<string, any> = {};
+      if (ids.length) {
+        const { data: profs } = await supabase.from("profiles").select("id,username,display_name,avatar_url").in("id", ids);
+        byId = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
+      }
+      return list.map((f: any) => ({ ...f, requester: byId[f.requester_id], addressee: byId[f.addressee_id] }));
     },
   });
 

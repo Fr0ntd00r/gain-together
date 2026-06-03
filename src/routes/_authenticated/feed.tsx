@@ -16,10 +16,16 @@ function Feed() {
   const { data: feed } = useQuery({
     queryKey: ["feed"],
     queryFn: async () => {
-      const { data } = await supabase.from("activity_feed")
-        .select("*, profiles!activity_feed_user_id_fkey(username,display_name,avatar_url)")
+      const { data: rows } = await supabase.from("activity_feed").select("*")
         .order("created_at", { ascending: false }).limit(50);
-      return data ?? [];
+      const list = rows ?? [];
+      const ids = Array.from(new Set(list.map((r: any) => r.user_id)));
+      let byId: Record<string, any> = {};
+      if (ids.length) {
+        const { data: profs } = await supabase.from("profiles").select("id,username,display_name,avatar_url").in("id", ids);
+        byId = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
+      }
+      return list.map((r: any) => ({ ...r, profiles: byId[r.user_id] }));
     },
   });
 
@@ -126,10 +132,16 @@ function Comments({ feedId }: { feedId: string }) {
   const { data } = useQuery({
     queryKey: ["comments", feedId],
     queryFn: async () => {
-      const { data } = await supabase.from("feed_comments")
-        .select("*, profiles!feed_comments_user_id_fkey(username,display_name)")
+      const { data: rows } = await supabase.from("feed_comments").select("*")
         .eq("feed_id", feedId).order("created_at");
-      return data ?? [];
+      const list = rows ?? [];
+      const ids = Array.from(new Set(list.map((c: any) => c.user_id)));
+      let byId: Record<string, any> = {};
+      if (ids.length) {
+        const { data: profs } = await supabase.from("profiles").select("id,username,display_name").in("id", ids);
+        byId = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
+      }
+      return list.map((c: any) => ({ ...c, profiles: byId[c.user_id] }));
     },
   });
   async function submit(e: React.FormEvent) {
