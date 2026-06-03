@@ -4,15 +4,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { startWorkout } from "@/lib/api/workouts.functions";
-import { Plus, Pencil, Trash2, X, Play, Dumbbell, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Play, Dumbbell, GripVertical, ChevronUp, ChevronDown, Info } from "lucide-react";
 import { toast } from "sonner";
+import { ExerciseDetail, type Exercise } from "@/components/exercise-detail";
 
 export const Route = createFileRoute("/_authenticated/templates")({
   head: () => ({ meta: [{ title: "Trainingspläne — FitForge" }] }),
   component: Templates,
 });
 
-type Exercise = { id: string; name: string; primary_muscle: string; equipment: string };
 type PlanRow = {
   position: number; exercise_id: string;
   target_sets: number; target_reps: number; target_weight: number | null;
@@ -153,10 +153,14 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [search, setSearch] = useState("");
 
+  const [detail, setDetail] = useState<{ exercise: Exercise; editing: boolean } | null>(null);
+
   const { data: allExercises } = useQuery({
     queryKey: ["all-exercises-plan"],
     queryFn: async () => {
-      const { data } = await supabase.from("exercises").select("id,name,primary_muscle,equipment").order("name");
+      const { data } = await supabase.from("exercises")
+        .select("id,name,primary_muscle,equipment,is_compound,instructions,tips,setup_notes,image_url,created_by")
+        .order("name");
       return (data ?? []) as Exercise[];
     },
   });
@@ -235,6 +239,7 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
   }
 
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-background/80 sm:items-center sm:p-4" onClick={onClose}>
       <div className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-border bg-card sm:rounded-3xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border p-4">
@@ -295,6 +300,8 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
                         </div>
                       </div>
                       <div className="flex shrink-0 items-center gap-1">
+                        <button onClick={() => { const ex = exById[row.exercise_id]; if (ex) setDetail({ exercise: ex, editing: false }); }}
+                          title="Bild & Hinweise" className="rounded p-1 text-muted-foreground hover:bg-muted"><Info className="h-3.5 w-3.5" /></button>
                         <button onClick={() => move(i, -1)} className="rounded p-1 text-muted-foreground hover:bg-muted"><ChevronUp className="h-3.5 w-3.5" /></button>
                         <button onClick={() => move(i, 1)} className="rounded p-1 text-muted-foreground hover:bg-muted"><ChevronDown className="h-3.5 w-3.5" /></button>
                         <button onClick={() => removeRow(i)} className="rounded p-1 text-muted-foreground hover:bg-muted"><Trash2 className="h-3.5 w-3.5" /></button>
@@ -332,22 +339,42 @@ function PlanEditor({ templateId, userId, onClose, onSaved }: {
             </div>
             <div className="flex-1 overflow-y-auto p-2">
               {(allExercises ?? []).filter(e => e.name.toLowerCase().includes(search.toLowerCase())).slice(0, 80).map(e => (
-                <button key={e.id} onClick={() => addExercise(e.id)} className="flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-muted">
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <div className="font-medium">{e.name}</div>
+                <div key={e.id} className="flex items-center gap-1 rounded-lg hover:bg-muted">
+                  <button onClick={() => addExercise(e.id)} className="flex min-w-0 flex-1 items-center gap-2 p-3 text-left">
+                    {e.image_url ? (
+                      <img src={e.image_url} alt="" className="h-9 w-9 shrink-0 rounded object-cover" />
+                    ) : (
+                      <Dumbbell className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    )}
+                    <div className="min-w-0">
+                      <div className="truncate font-medium">{e.name}</div>
                       <div className="text-[10px] uppercase text-muted-foreground">{e.primary_muscle} · {e.equipment}</div>
                     </div>
-                  </div>
-                  <Plus className="h-4 w-4 text-primary" />
-                </button>
+                  </button>
+                  <button onClick={() => setDetail({ exercise: e, editing: false })} title="Bild & Hinweise"
+                    className="mr-1 shrink-0 rounded-lg p-2 text-muted-foreground hover:bg-background"><Info className="h-4 w-4" /></button>
+                  <button onClick={() => addExercise(e.id)} title="Hinzufügen"
+                    className="mr-2 shrink-0 rounded-lg p-2 text-primary hover:bg-background"><Plus className="h-4 w-4" /></button>
+                </div>
               ))}
             </div>
           </div>
         )}
       </div>
     </div>
+
+    {detail && (
+      <ExerciseDetail
+        key={detail.exercise.id}
+        exercise={detail.exercise}
+        userId={userId}
+        editing={detail.editing}
+        onEdit={() => setDetail(d => d && { ...d, editing: true })}
+        onClose={() => setDetail(null)}
+        onSaved={() => setDetail(d => d && { ...d, editing: false })}
+      />
+    )}
+    </>
   );
 }
 
