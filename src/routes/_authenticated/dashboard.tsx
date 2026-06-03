@@ -1,12 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getDashboard } from "@/lib/api/workouts.functions";
+import { getDashboard, startWorkout } from "@/lib/api/workouts.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { elapsedSeconds, formatDuration } from "@/lib/workout-timer";
-import { Flame, Trophy, TrendingUp, Plus, Calendar, Award, Timer, Play, Pause } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Flame, Trophy, TrendingUp, Plus, Calendar, Award, Timer, Play, Pause, Coffee, ChevronRight } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
 import { de } from "date-fns/locale";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — FitForge" }] }),
@@ -17,6 +19,40 @@ function Dashboard() {
   const fetchDashboard = useServerFn(getDashboard);
   const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => fetchDashboard() });
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const start = useServerFn(startWorkout);
+
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => { supabase.auth.getUser().then(r => setUserId(r.data.user?.id ?? null)); }, []);
+
+  const { data: todayPlan } = useQuery({
+    queryKey: ["schedule-today", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const key = format(new Date(), "yyyy-MM-dd");
+      const { data: s } = await supabase.from("scheduled_workouts")
+        .select("id,template_id,status,workout_id").eq("user_id", userId!).eq("date", key).maybeSingle();
+      if (!s) return null;
+      let name: string | null = null;
+      if (s.template_id) {
+        const { data: t } = await supabase.from("workout_templates").select("name").eq("id", s.template_id).maybeSingle();
+        name = t?.name ?? null;
+      }
+      return { ...s, name };
+    },
+  });
+
+  async function startToday() {
+    if (!todayPlan?.template_id) return;
+    try {
+      const r = await start({ data: { templateId: todayPlan.template_id } });
+      await supabase.from("scheduled_workouts").update({ workout_id: r.workoutId, status: "done" }).eq("id", todayPlan.id);
+      qc.invalidateQueries({ queryKey: ["schedule-today"] });
+      navigate({ to: "/workouts/$id", params: { id: r.workoutId } });
+    } catch (e: any) { toast.error(e.message); }
+  }
+
+  const hasPlannedToday = !!(todayPlan?.template_id && todayPlan.status !== "done");
 
   if (isLoading) return <div className="grid gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-card" />)}</div>;
   if (!data) return null;
@@ -39,14 +75,50 @@ function Dashboard() {
 
       {data.activeWorkout && <ActiveWorkoutBanner w={data.activeWorkout} />}
 
-      <Link to="/workouts/new" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-primary p-5 shadow-glow">
-        <div>
-          <div className="text-sm font-medium text-primary-foreground/80">Heute</div>
-          <div className="text-xl font-bold text-primary-foreground">Workout starten</div>
-        </div>
-        <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary-foreground/15">
-          <Plus className="h-6 w-6 text-primary-foreground" />
-        </div>
+      {hasPlannedToday && (
+        <button onClick={startToday} className="flex w-full items-center justify-between gap-3 rounded-2xl bg-gradient-primary p-5 text-left shadow-glow">
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-primary-foreground/80">Heute geplant</div>
+            <div className="truncate text-xl font-bold text-primary-foreground">{todayPlan!.name}</div>
+          </div>
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary-foreground/15">
+            <Play className="h-6 w-6 text-primary-foreground" />
+          </div>
+        </button>
+      )}
+
+      {todayPlan && !todayPlan.template_id && (
+        <Link to="/schedule" className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-center gap-2"><Coffee className="h-5 w-5 text-muted-foreground" /><span className="font-semibold">Heute: Ruhetag</span></div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Link>
+      )}
+
+      {todayPlan?.template_id && todayPlan.status === "done" && (
+        <Link to="/schedule" className="flex items-center justify-between rounded-2xl border border-success/40 bg-success/10 p-4">
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-success">Heute erledigt ✓</div>
+            <div className="truncate font-bold">{todayPlan.name}</div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Link>
+      )}
+
+      {!hasPlannedToday && (
+        <Link to="/workouts/new" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-primary p-5 shadow-glow">
+          <div>
+            <div className="text-sm font-medium text-primary-foreground/80">Heute</div>
+            <div className="text-xl font-bold text-primary-foreground">Workout starten</div>
+          </div>
+          <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary-foreground/15">
+            <Plus className="h-6 w-6 text-primary-foreground" />
+          </div>
+        </Link>
+      )}
+
+      <Link to="/schedule" className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
+        <div className="flex items-center gap-2"><Calendar className="h-5 w-5 text-primary" /><span className="font-semibold">Wochenplan & Kalender</span></div>
+        <ChevronRight className="h-5 w-5 text-muted-foreground" />
       </Link>
 
       <section>
