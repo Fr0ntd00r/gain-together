@@ -156,6 +156,50 @@ export type Database = {
           },
         ]
       }
+      exercise_user_notes: {
+        Row: {
+          created_at: string
+          exercise_id: string
+          id: string
+          image_url: string | null
+          instructions: string | null
+          setup_notes: string | null
+          tips: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exercise_id: string
+          id?: string
+          image_url?: string | null
+          instructions?: string | null
+          setup_notes?: string | null
+          tips?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exercise_id?: string
+          id?: string
+          image_url?: string | null
+          instructions?: string | null
+          setup_notes?: string | null
+          tips?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_user_notes_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercises: {
         Row: {
           created_at: string
@@ -207,134 +251,6 @@ export type Database = {
             | null
           setup_notes?: string | null
           tips?: string | null
-        }
-        Relationships: []
-      }
-      exercise_user_notes: {
-        Row: {
-          created_at: string
-          exercise_id: string
-          id: string
-          image_url: string | null
-          instructions: string | null
-          setup_notes: string | null
-          tips: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          exercise_id: string
-          id?: string
-          image_url?: string | null
-          instructions?: string | null
-          setup_notes?: string | null
-          tips?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          exercise_id?: string
-          id?: string
-          image_url?: string | null
-          instructions?: string | null
-          setup_notes?: string | null
-          tips?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_user_notes_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      schedule_settings: {
-        Row: {
-          anchor_date: string
-          cycle_length: number
-          mode: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          anchor_date?: string
-          cycle_length?: number
-          mode?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          anchor_date?: string
-          cycle_length?: number
-          mode?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      schedule_rules: {
-        Row: {
-          id: string
-          mode: string
-          slot_index: number
-          template_id: string | null
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          mode: string
-          slot_index: number
-          template_id?: string | null
-          user_id: string
-        }
-        Update: {
-          id?: string
-          mode?: string
-          slot_index?: number
-          template_id?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      scheduled_workouts: {
-        Row: {
-          created_at: string
-          date: string
-          id: string
-          note: string | null
-          status: string
-          template_id: string | null
-          updated_at: string
-          user_id: string
-          workout_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          date: string
-          id?: string
-          note?: string | null
-          status?: string
-          template_id?: string | null
-          updated_at?: string
-          user_id: string
-          workout_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          date?: string
-          id?: string
-          note?: string | null
-          status?: string
-          template_id?: string | null
-          updated_at?: string
-          user_id?: string
-          workout_id?: string | null
         }
         Relationships: []
       }
@@ -524,6 +440,113 @@ export type Database = {
           weight_unit?: string | null
         }
         Relationships: []
+      }
+      schedule_rules: {
+        Row: {
+          id: string
+          mode: string
+          slot_index: number
+          template_id: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          mode: string
+          slot_index: number
+          template_id?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          mode?: string
+          slot_index?: number
+          template_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedule_rules_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "workout_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schedule_settings: {
+        Row: {
+          anchor_date: string
+          cycle_length: number
+          mode: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anchor_date?: string
+          cycle_length?: number
+          mode?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anchor_date?: string
+          cycle_length?: number
+          mode?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scheduled_workouts: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          note: string | null
+          status: string
+          template_id: string | null
+          updated_at: string
+          user_id: string
+          workout_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          note?: string | null
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id: string
+          workout_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id?: string
+          workout_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_workouts_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "workout_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_workouts_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       template_exercises: {
         Row: {
