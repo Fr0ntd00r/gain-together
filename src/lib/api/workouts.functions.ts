@@ -149,21 +149,21 @@ export const completeWorkout = createServerFn({ method: "POST" })
     const ls = Math.max(prof?.longest_streak ?? 0, cs);
     await supabase.from("profiles").update({ current_streak: cs, longest_streak: ls, last_workout_date: today }).eq("id", userId);
 
-    // Feed entry
-    await supabase.from("activity_feed").insert({
+    // Feed entry (server-side; clients can't insert)
+    await supabaseAdmin.from("activity_feed").insert({
       user_id: userId, event_type: "workout_completed", ref_id: data.workoutId,
       data: { name: workout.name, volume: totalVolume, duration, sets: completedSets.length, prs: newPRs.length },
     });
     for (const pr of newPRs) {
-      await supabase.from("activity_feed").insert({
+      await supabaseAdmin.from("activity_feed").insert({
         user_id: userId, event_type: "personal_record", ref_id: data.workoutId, data: { exercise_id: pr.exerciseId, value: pr.value },
       });
     }
 
-    // Achievement check
-    await checkAndAwardAchievements(supabase, userId);
+    // Achievement check (uses admin for inserts)
+    await checkAndAwardAchievements(supabase, supabaseAdmin, userId);
     // Update challenge progress
-    await updateChallengeProgress(supabase, userId);
+    await updateChallengeProgress(supabase, supabaseAdmin, userId);
 
     return { ok: true, volume: totalVolume, prs: newPRs.length, streak: cs };
   });
