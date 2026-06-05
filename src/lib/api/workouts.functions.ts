@@ -128,7 +128,7 @@ export const completeWorkout = createServerFn({ method: "POST" })
         const { data: existing } = await supabase.from("personal_records")
           .select("value").eq("user_id", userId).eq("exercise_id", exerciseId).eq("record_type", type).maybeSingle();
         if (!existing || Number(existing.value) < val) {
-          await supabase.from("personal_records").upsert({
+          await supabaseAdmin.from("personal_records").upsert({
             user_id: userId, exercise_id: exerciseId, record_type: type, value: val,
             workout_id: data.workoutId, achieved_at: finishedAt.toISOString(),
           }, { onConflict: "user_id,exercise_id,record_type" });
