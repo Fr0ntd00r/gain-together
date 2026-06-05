@@ -80,6 +80,7 @@ export const completeWorkout = createServerFn({ method: "POST" })
   .inputValidator((d: { workoutId: string }) => z.object({ workoutId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: workout } = await supabase.from("workouts").select("*").eq("id", data.workoutId).eq("user_id", userId).maybeSingle();
     if (!workout) throw new Error("Workout nicht gefunden");
     const { data: sets } = await supabase.from("workout_sets").select("*").eq("workout_id", data.workoutId).eq("is_completed", true);
