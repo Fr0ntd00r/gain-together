@@ -35,7 +35,11 @@ export const getDashboard = createServerFn({ method: "GET" })
 // Start a new workout from template or empty
 export const startWorkout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { templateId?: string; name?: string }) => d)
+  .inputValidator((d: { templateId?: string; name?: string }) =>
+    z.object({
+      templateId: z.string().uuid().optional(),
+      name: z.string().trim().min(1).max(200).optional(),
+    }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     let name = data.name ?? "Quick Workout";
