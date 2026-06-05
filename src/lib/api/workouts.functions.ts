@@ -35,7 +35,11 @@ export const getDashboard = createServerFn({ method: "GET" })
 // Start a new workout from template or empty
 export const startWorkout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { templateId?: string; name?: string }) => d)
+  .inputValidator((d: { templateId?: string; name?: string }) =>
+    z.object({
+      templateId: z.string().uuid().optional(),
+      name: z.string().trim().min(1).max(200).optional(),
+    }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     let name = data.name ?? "Quick Workout";
@@ -76,6 +80,7 @@ export const completeWorkout = createServerFn({ method: "POST" })
   .inputValidator((d: { workoutId: string }) => z.object({ workoutId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: workout } = await supabase.from("workouts").select("*").eq("id", data.workoutId).eq("user_id", userId).maybeSingle();
     if (!workout) throw new Error("Workout nicht gefunden");
     const { data: sets } = await supabase.from("workout_sets").select("*").eq("workout_id", data.workoutId).eq("is_completed", true);
@@ -123,7 +128,7 @@ export const completeWorkout = createServerFn({ method: "POST" })
         const { data: existing } = await supabase.from("personal_records")
           .select("value").eq("user_id", userId).eq("exercise_id", exerciseId).eq("record_type", type).maybeSingle();
         if (!existing || Number(existing.value) < val) {
-          await supabase.from("personal_records").upsert({
+          await supabaseAdmin.from("personal_records").upsert({
             user_id: userId, exercise_id: exerciseId, record_type: type, value: val,
             workout_id: data.workoutId, achieved_at: finishedAt.toISOString(),
           }, { onConflict: "user_id,exercise_id,record_type" });
@@ -144,26 +149,26 @@ export const completeWorkout = createServerFn({ method: "POST" })
     const ls = Math.max(prof?.longest_streak ?? 0, cs);
     await supabase.from("profiles").update({ current_streak: cs, longest_streak: ls, last_workout_date: today }).eq("id", userId);
 
-    // Feed entry
-    await supabase.from("activity_feed").insert({
+    // Feed entry (server-side; clients can't insert)
+    await supabaseAdmin.from("activity_feed").insert({
       user_id: userId, event_type: "workout_completed", ref_id: data.workoutId,
       data: { name: workout.name, volume: totalVolume, duration, sets: completedSets.length, prs: newPRs.length },
     });
     for (const pr of newPRs) {
-      await supabase.from("activity_feed").insert({
+      await supabaseAdmin.from("activity_feed").insert({
         user_id: userId, event_type: "personal_record", ref_id: data.workoutId, data: { exercise_id: pr.exerciseId, value: pr.value },
       });
     }
 
-    // Achievement check
-    await checkAndAwardAchievements(supabase, userId);
+    // Achievement check (uses admin for inserts)
+    await checkAndAwardAchievements(supabase, supabaseAdmin, userId);
     // Update challenge progress
-    await updateChallengeProgress(supabase, userId);
+    await updateChallengeProgress(supabase, supabaseAdmin, userId);
 
     return { ok: true, volume: totalVolume, prs: newPRs.length, streak: cs };
   });
 
-async function checkAndAwardAchievements(supabase: any, userId: string) {
+async function checkAndAwardAchievements(supabase: any, supabaseAdmin: any, userId: string) {
   const [{ data: achievements }, { count: workoutCount }, { count: prCount }, { count: friendsCount }, { data: profile }] = await Promise.all([
     supabase.from("achievements").select("*"),
     supabase.from("workouts").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("is_completed", true),
@@ -186,8 +191,8 @@ async function checkAndAwardAchievements(supabase: any, userId: string) {
     else if (c.type === "streak") unlock = (profile?.current_streak ?? 0) >= c.value;
     else if (c.type === "volume") unlock = totalVol >= c.value;
     if (unlock) {
-      await supabase.from("user_achievements").insert({ user_id: userId, achievement_id: a.id });
-      await supabase.from("activity_feed").insert({
+      await supabaseAdmin.from("user_achievements").insert({ user_id: userId, achievement_id: a.id });
+      await supabaseAdmin.from("activity_feed").insert({
         user_id: userId, event_type: "achievement_unlocked", ref_id: a.id,
         data: { name: a.name, tier: a.tier, icon: a.icon },
       });
@@ -195,7 +200,7 @@ async function checkAndAwardAchievements(supabase: any, userId: string) {
   }
 }
 
-async function updateChallengeProgress(supabase: any, userId: string) {
+async function updateChallengeProgress(supabase: any, supabaseAdmin: any, userId: string) {
   const { data: parts } = await supabase.from("challenge_participants").select("*, challenges(*)").eq("user_id", userId).eq("is_completed", false);
   for (const p of parts ?? []) {
     const ch = p.challenges;
@@ -209,7 +214,7 @@ async function updateChallengeProgress(supabase: any, userId: string) {
     const completed = ch.target_value ? value >= Number(ch.target_value) : false;
     await supabase.from("challenge_participants").update({ current_value: value, is_completed: completed }).eq("id", p.id);
     if (completed) {
-      await supabase.from("activity_feed").insert({
+      await supabaseAdmin.from("activity_feed").insert({
         user_id: userId, event_type: "challenge_completed", ref_id: ch.id, data: { name: ch.name },
       });
     }
