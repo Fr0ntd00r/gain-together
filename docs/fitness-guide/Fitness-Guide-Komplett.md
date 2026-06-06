@@ -271,14 +271,16 @@ Ziel pro Frühstück: 35–60 g Protein · 8–15 g Ballaststoffe · 300–700 k
 | 1 | **Protein-Shake Standard** ⭐⭐⭐⭐⭐ | 40 g Whey · 300 ml Milch 1,5 % · 10 g Flohsamenschalen | 320 | 42 g | 18 g | 7 g | 8 g |
 | 1b | Protein-Shake Deluxe | + 50 g Haferflocken zum Standard | 510 | 48 g | 48 g | 10 g | 13 g |
 | 2 | **Skyr Power Bowl** ⭐⭐⭐⭐⭐ (Favorit) | 500 g Skyr · 150 g Beeren · 50 g Haferflocken · 10 g Flohsamenschalen | 550 | 58 g | 45 g | 5 g | 14 g |
-| 3 | Skyr Light | 500 g Skyr · 150 g Beeren (+10 g Flohsamen → 13 g Ballast.) | 350 | 52 g | 18 g | 1 g | 5 g |
-| 4 | Eier & Skyr | 4 Eier · 300 g Skyr | 500 | 48 g | – | 22 g | 0 g |
-| 5 | Hotel-Frühstück | 4 Eier · 200 g Skyr · 100 g Putenaufschnitt | 550 | 60 g | – | 20 g | 0–2 g |
-| 6 | Overnight Oats | 50 g Haferflocken · 300 g Skyr · 150 g Beeren · 10 g Flohsamen | 500 | 40 g | – | – | 14 g |
-| 7 | Iso-Clear Frühstück | 40 g Iso Clear · 1 Banane | 220 | 30–32 g | – | – | 3 g |
-| 8 | Büro Express | 1 Proteinpudding · 40 g Whey | 350 | 55 g | – | – | 1–2 g |
-| 9 | Wochenende | 4 Eier · 2 Protein-Wraps · 100 g Putenaufschnitt | 650 | 55 g | – | – | 8 g |
-| 10 | **Maximal-Sättigung** ⭐⭐⭐⭐⭐ | 500 g Skyr · 50 g Haferflocken · 150 g Beeren · 10 g Flohsamen · 20 g Whey | 650 | 75 g | – | – | 15 g |
+| 3 | Skyr Light | 500 g Skyr · 150 g Beeren | 350 | 52 g | 18 g | 1 g | 5 g |
+| 4 | Eier & Skyr | 4 Eier · 300 g Skyr | 500 | 48 g | 8 g | 22 g | 0 g |
+| 5 | Hotel-Frühstück | 4 Eier · 200 g Skyr · 100 g Putenaufschnitt | 550 | 60 g | 6 g | 20 g | 0–2 g |
+| 6 | Overnight Oats | 50 g Haferflocken · 300 g Skyr · 150 g Beeren · 10 g Flohsamen | 500 | 40 g | 48 g | 9 g | 14 g |
+| 7 | Iso-Clear Frühstück | 40 g Iso Clear · 1 Banane | 220 | 30–32 g | 26 g | 1 g | 3 g |
+| 8 | Büro Express | 1 Proteinpudding · 40 g Whey | 350 | 55 g | 10 g | 4 g | 1–2 g |
+| 9 | Wochenende | 4 Eier · 2 Protein-Wraps · 100 g Putenaufschnitt | 650 | 55 g | 24 g | 30 g | 8 g |
+| 10 | **Maximal-Sättigung** ⭐⭐⭐⭐⭐ | 500 g Skyr · 50 g Haferflocken · 150 g Beeren · 10 g Flohsamen · 20 g Whey | 650 | 75 g | 52 g | 8 g | 15 g |
+
+*Skyr Light: mit +10 g Flohsamenschalen steigen die Ballaststoffe auf ≈ 13 g (kcal nahezu unverändert).*
 
 **Tipp Protein-Shake ohne Milch:** Milch durch Wasser ersetzen → ca. 180 kcal / 32 g Protein.
 
@@ -301,7 +303,7 @@ Wichtigste Mahlzeit für den Alltag: bürotauglich, wenig Aufwand, hoher Protein
 | 5 | Steak Bowl | 250 g Steak · 300 g Kartoffeln · 250 g Gemüse | 750 | 60 g | 50 g | 22 g | 10 g |
 | 6 | Komfort-Version (5 Min) | 250 g Fertig-Hähnchen · 250 g Mikrowellenreis · 300 g TK-Gemüse | 700 | 55 g | 65 g | 10 g | 10 g |
 | 7 | Supermarkt Express | 250 g Hähnchenaufschnitt · 1 Proteinpudding · 150 g Salat | 500 | 65 g | 15 g | 10 g | 4 g |
-| 8 | Kantinen-Regel | *System:* 1. Protein 2. Gemüse (≥300 g) 3. Kartoffeln/Reis | 600–800 | 40–60 g | – | – | 8–12 g |
+| 8 | Kantinen-Regel | *System:* 1. Protein 2. Gemüse (≥300 g) 3. Kartoffeln/Reis | 600–800 | 40–60 g | 50–70 g | 15–25 g | 8–12 g |
 | 9 | Kartoffel-Hähnchen-Salat | 250 g Hähnchen · 350 g Kartoffeln · 200 g Salat · 100 g Gurke | 650 | 60 g | 55 g | 8 g | 10 g |
 | 10 | Büro Notfall | 40 g Whey · 2 Proteinpudding · 1 Banane | 600 | 70 g | 35 g | 8 g | 3 g |
 | 11 | Rinderhack Bowl | 200 g Rinderhack 5 % · 250 g Kartoffeln · 300 g Gemüse | 700 | 50 g | 40 g | 22 g | 10 g |
@@ -334,8 +336,8 @@ Hier darf der Großteil der Kalorien gegessen werden. Vier Regeln: **1. Protein 
 | 8 | Reis Bowl (Leg Day) | 250 g Hähnchen · 100 g Reis (trocken) · 300 g Gemüse | 850 | 65 g | 80 g | 8 g | 10 g |
 | 9 | Ofenhähnchen (höchstes Protein) | 300 g Hähnchen · 400 g Kartoffeln · 300 g Gemüse | 850 | 75 g | 60 g | 10 g | 14 g |
 | 10 | Komfort-Version (5 Min) | 250 g Fertig-Hähnchen · 250 g Mikrowellenreis · 300 g TK-Gemüse | 700 | 55 g | 60 g | 10 g | 10 g |
-| 11 | Skyr Abendessen (kalorienarmer Tag) | 500 g Skyr · 100 g Beeren · 50 g Haferflocken | 550 | 58 g | – | – | 10 g |
-| 12 | Burger Bowl | 250 g Rinderhack · Salat · Gurke · Tomate · Kartoffelspalten | 800 | 55 g | – | – | 10 g |
+| 11 | Skyr Abendessen (kalorienarmer Tag) | 500 g Skyr · 100 g Beeren · 50 g Haferflocken | 550 | 58 g | 45 g | 4 g | 10 g |
+| 12 | Burger Bowl | 250 g Rinderhack · Salat · Gurke · Tomate · Kartoffelspalten | 800 | 55 g | 55 g | 30 g | 10 g |
 
 ### Flexible Abend-Situationen (20 %)
 
@@ -366,8 +368,8 @@ Snacks sind **kein Pflichtbestandteil** – wenn du mit den Hauptmahlzeiten 200 
 | 6 | Iso Clear | 40 g Iso Clear | 120 | 30 g | 1 g | 0 g | 0 g |
 | 7 | Quark Premium | 500 g Magerquark · 100 g Beeren | 380 | 60 g | 18 g | 2 g | 4 g |
 | 8 | **Maximaler Sättigungssnack** ⭐⭐⭐⭐⭐ | 500 g Skyr · 20 g Whey · 10 g Flohsamen · 100 g Beeren | 450 | 75 g | 20 g | 2 g | 12 g |
-| 9 | Büro Notfall | 1 Proteinpudding · 40 g Whey | 350 | 55 g | 15 g | 5 g | – |
-| 10 | Reise Snack | 40 g Iso Clear · 1 Proteinriegel | 320 | 50 g | 20 g | 7 g | – |
+| 9 | Büro Notfall | 1 Proteinpudding · 40 g Whey | 350 | 55 g | 15 g | 5 g | 1 g |
+| 10 | Reise Snack | 40 g Iso Clear · 1 Proteinriegel | 320 | 50 g | 20 g | 7 g | 1–2 g |
 
 Weitere Varianten: Skyr Pur (500 g = 300 kcal/55 g P) · Quark Maximum (500 g Quark + 100 g Beeren + 10 g Flohsamen = 400 kcal/60 g P/12 g Ballast.) · Eier-Snack (4 gekochte Eier = 300 kcal/28 g P) · doppelter Proteinpudding (300–400 kcal/40–50 g P).
 
@@ -393,12 +395,13 @@ Grundregel: Du musst nicht jeden Tag perfekt sein. Du musst nur **Protein treffe
 | Zeit | Mahlzeit | kcal | Protein | Ballast. |
 |---|---|---|---|---|
 | 07:00 | Protein-Shake (40 g Whey · 300 ml Milch · 10 g Flohsamen) | 320 | 42 g | 8 g |
-| 12:00 | Hähnchen Bowl (200 g Hähnchen · 300 g Kartoffeln · 300 g Brokkoli) | 650 | 55 g | 12 g |
+| 12:00 | Reis Bowl XXL (250 g Hähnchen · 100 g Reis · 300 g Gemüse) | 850 | 65 g | 10 g |
 | 16:00 | Skyr Maximum (500 g Skyr · 100 g Beeren · 10 g Flohsamen) | 370 | 55 g | 12 g |
+| 18:00 | Whey + Flohsamenschalen (40 g Whey · 10 g Flohsamen) | 170 | 32 g | 8 g |
 | 20:00 | Rinderhackpfanne (250 g Hack · 80 g Reis · 200 g Paprika · 200 g Zucchini) | 850 | 60 g | 10 g |
-| **Summe** | | **≈ 2.190** | **≈ 212 g** | **≈ 42 g** |
+| **Summe** | | **≈ 2.560** | **≈ 254 g** | **≈ 48 g** |
 
-→ Optional + 1 Proteinpudding ≈ 2.350–2.400 kcal.
+→ Trifft den Trainingstag-Korridor (2.500–2.700 kcal). Wer Protein bewusst bei ~190–210 g halten will, lässt den 18:00-Snack weg (≈ 2.390 kcal) oder ersetzt die Reis Bowl XXL durch die normale Hähnchen Bowl (650 kcal). Hungrige Tage: + 1 Proteinpudding ≈ 2.700 kcal (oberes Ende).
 
 ### Komfort-Trainingstag (Stress/wenig Zeit)
 
@@ -747,12 +750,13 @@ Rotation: Woche 1 = A / B / A · Woche 2 = B / A / B.
 | 5 | Preacher Curl Maschine | 3 | 8–12 | 30 kg | Doppelprogr. | SZ-Curl · Kabelcurl · einarmige Preacher Curl |
 | 6 | Rudern eng | 3 | 8–12 | 45 kg | Doppelprogr. | brustgestütztes Rudern · T-Bar · Rudern normal |
 | + | **Seitheben** (empfohlen ergänzen) | 2–3 | 12–20 | – | Doppelprogr. | KH · Kabel · Maschine |
+| + | **Face Pull** (empfohlen ergänzen) | 2–3 | 12–20 | – | Doppelprogr. | Reverse Pec Deck · Reverse Flys KH |
 
 **Technik Bankdrücken:** Schulterblätter nach hinten, Brust raus, Füße fest im Boden. Fehler: Ellenbogen komplett ausstellen, Hantel aufspringen lassen.
 
-**Volumen Training A:** Brust 8 · Schulter 5–8 · Bizeps 3 · Rücken 3.
+**Volumen Training A:** Brust 8 · Schulter (vorne) 5–8 · Schulter (hinten) 2–3 · Bizeps 3 · Rücken 3.
 
-> Wichtigste Einzeländerung gegenüber deinem bisherigen Training: **Seitheben 2–3 Sätze ergänzen** – die seitliche Schulter bekommt sonst wenig direkte Arbeit und bringt optisch (V-Form) den größten Nutzen.
+> Wichtigste Einzeländerungen gegenüber deinem bisherigen Training: **Seitheben** (seitliche Schulter, V-Form) und **Face Pull** (hintere Schulter) 2–3 Sätze ergänzen. Bei viel Drück-Volumen und Bürojob (Schreibtischhaltung) ist die hintere Schulter die am häufigsten vernachlässigte Muskelgruppe – sie verbessert Schultergesundheit, Haltung und Optik.
 
 ### Training B (Beine / Rücken / Trizeps) — ca. 60–80 Min
 
@@ -761,23 +765,33 @@ Wichtigster Tag für Fettverlust (Beine & Rücken = größte Muskelgruppen).
 | # | Übung | Sätze | Wdh. | Start | Progression | Alternativen |
 |---|---|---|---|---|---|---|
 | 1 | Beinpresse | 4 | 8–15 | 100–130 kg | bei 15×4 → +10 kg | Hackenschmidt · Multipresse-Kniebeuge · Goblet Squat |
-| 2 | Beinbeuger (sitzend) | 3 | 10–15 | – | Doppelprogr. | Beinbeuger liegend · rumänisches Kreuzheben |
-| 3 | Latziehen eng | 3 | 8–12 | 59 kg | bei 12/12/12 → +5 kg | Latziehen breit · Assist-Klimmzüge · einarmige Lat-Maschine |
-| 4 | Rudern normal | 3 | 8–12 | 45 kg | Doppelprogr. | brustgestütztes Rudern · T-Bar · Rudern eng |
-| 5 | Trizeps Pushdown (Kabel) | 3 | 10–15 | 22 kg | Doppelprogr. | Rope Pushdown · Trizepsstange · einarmig Kabel |
-| 6 | Trizeps SZ liegend | 3 | 8–12 | 15 kg | Doppelprogr. | Dips Assist Machine · Overhead Extension |
-| 7 | Adduktoren *(optional)* | 2 | 12–20 | 50 kg | Doppelprogr. | Abduktoren · Ausfallschritte |
-| + | **Wadenheben** (besser als Adduktoren ergänzen) | 3 | 12–20 | – | Doppelprogr. | – |
+| 2 | Beinbeuger (sitzend) | 3 | 10–15 | – | Doppelprogr. | Beinbeuger liegend |
+| 3 | **Rum. Kreuzheben (Hip-Hinge)** | 2–3 | 8–12 | – | Doppelprogr. | Hyperextension · Hip Thrust |
+| 4 | Latziehen eng | 3 | 8–12 | 59 kg | bei 12/12/12 → +5 kg | Latziehen breit · Assist-Klimmzüge · einarmige Lat-Maschine |
+| 5 | Rudern normal | 3 | 8–12 | 45 kg | Doppelprogr. | brustgestütztes Rudern · T-Bar · Rudern eng |
+| 6 | Trizeps Pushdown (Kabel) | 3 | 10–15 | 22 kg | Doppelprogr. | Rope Pushdown · Trizepsstange · einarmig Kabel |
+| 7 | Trizeps SZ liegend | 3 | 8–12 | 15 kg | Doppelprogr. | Dips Assist Machine · Overhead Extension |
+| 8 | **Wadenheben** | 3 | 12–20 | – | Doppelprogr. | stehend · sitzend · an der Beinpresse |
+| + | Adduktoren *(optional)* | 2 | 12–20 | 50 kg | Doppelprogr. | Abduktoren · Ausfallschritte |
 
 **Technik Beinpresse:** volle Kontrolle, nicht aufspringen, tiefe ROM. Fehler: halbe Wiederholungen, Gewicht statt Bewegungsumfang.
+**Technik RDL/Hip-Hinge:** Hüfte nach hinten schieben, Rücken neutral, leichte Kniebeugung, Stange/Gewicht nah am Körper – Dehnung in der hinteren Oberschenkelmuskulatur spüren. Anfangs leicht und sauber, dann steigern.
 
-**Volumen Training B:** Beine 7–10 · Rücken 6 · Trizeps 6 · Waden optional 3.
+**Volumen Training B:** Beine (Quad) 7–10 · hintere Kette (Beinbeuger + RDL) 5–6 · Rücken 6 · Trizeps 6 · Waden 3.
+
+### Core (optional, 1–2×/Woche)
+
+Für dein Ziel kein Muss (Bauchdefinition kommt v. a. über den Fettverlust), aber für Rumpfkraft & Haltung sinnvoll. 2–3 Sätze, am Ende einer Einheit oder als kurze Eigeneinheit:
+
+- **Plank** (Unterarmstütz) · **Cable Crunch** · **Hanging Knee Raise / Beinheben** · **Ab-Wheel** (fortgeschritten)
 
 ### Größte Lücken im ursprünglichen Training (behoben)
 
 1. **Beinbeuger fehlten** (hintere Oberschenkel) → ergänzt, Priorität hoch.
-2. Kaum Hüftstreckung/Gesäß → optional rumänisches Kreuzheben / Hyperextensions / Hip Thrust.
-3. Zu viel Schultervolumen vorne → auf Schulterpresse + Seitheben reduzieren.
+2. **Hüftstreckung/Gesäß** → rumänisches Kreuzheben jetzt fest eingeplant (2–3 Sätze), Alternativen Hyperextension / Hip Thrust.
+3. **Hintere Schulter** fehlte → Face Pull in Training A ergänzt.
+4. **Waden** fehlten → jetzt feste Übung statt optional.
+5. Zu viel Schultervolumen vorne → auf Schulterpresse + Seitheben reduziert.
 
 ---
 
@@ -805,12 +819,34 @@ Rotation: Woche 1 = GK A / GK B / GK A · Woche 2 = GK B / GK A / GK B.
 | Schrägbank KH | 3 × 8–12 |
 | Rudern eng | 3 × 8–12 |
 | Leg Extension | 4 × 12–15 |
+| Beinbeuger (sitzend) | 3 × 10–15 |
 | Lat-Maschine einarmig | 3 × 10–15 |
 | Seitheben | 3 × 15–20 |
 | Trizeps SZ | 2 × 10–15 |
 | Preacher Curl einarmig | 2 × 10–15 |
 
+> Hinweis: In Ganzkörper A wird die Beinrückseite über die Beinpresse mit abgedeckt; wer hier mehr will, ergänzt 2–3 Sätze rumänisches Kreuzheben. Für die hintere Schulter optional 2 Sätze Face Pull in eine der beiden Einheiten.
+
 > Push/Pull/Legs ist aktuell **nicht** sinnvoll (zu wenig Frequenz bei 3 Tagen). A/B bzw. Ganzkörper-A/B ist überlegen.
+
+---
+
+## 5.7a 12-Monats-Periodisierung (Volumen & Phasen)
+
+Die Übungen bleiben über Monate weitgehend gleich – was sich ändert, ist **Volumen und Intensität**. Konkret: Du bewegst dich innerhalb der Wochen-Satzkorridore aus **5.4** im Lauf des Jahres vom unteren ans obere Ende. Die Phasen sind deckungsgleich mit der 12-Monats-Roadmap (→ Kapitel 7.2), die Kraftziele stehen in **5.11** bzw. der Kraftentwicklungs-Tabelle in Kapitel 7.2 – hier nur die Trainingssteuerung.
+
+| Phase | Monat | System | Schwerpunkt | Wochen-Sätze/Muskel | Ø RIR letzter Satz | Deload |
+|---|---|---|---|---|---|---|
+| 1 · Adaptation | 1–3 | A/B (System 1) | Technik, Gewohnheit, Progression lernen | unteres Ende (Brust 10 · Rücken 12 · Beine 10) | 2 | bei Bedarf um Wo. 8–10 |
+| 2 · Akkumulation | 4–6 | Wechsel auf Ganzkörper-A/B (System 2) | Frequenz & Volumen aufbauen | mittel (Brust 12 · Rücken 14 · Beine 12) | 1–2 | alle 8 Wochen |
+| 3 · Intensivierung | 7–9 | Ganzkörper-A/B | näher ans Versagen, Hüftstreckung/Core fest dazu | oberes Ende (Brust 14 · Rücken 16 · Beine 14) | 1 (Isolation 0–1) | alle 6–8 Wochen |
+| 4 · Erhalt/Feinschliff | 10–12 | A/B oder Ganzkörper | Kraft halten + Aufbau im Zielgewicht | mittel–hoch, nach Erholung | 1–2 | regelmäßig alle 8 Wochen |
+
+**Steuerungsregeln:**
+- Volumen nur erhöhen, wenn Erholung, Schlaf und Progression stimmen – sonst Phase verlängern, nicht überspringen.
+- Mehr Volumen ⇒ entsprechend mehr Nahrung/Schlaf nötig; im stärkeren Defizit (Phase 3) eher am **unteren** Ende des jeweiligen Korridors bleiben.
+- Deload-Mechanik unverändert wie in **5.10** (Sätze −50 %, Gewicht −10–15 %).
+- Sätze pro Übung bleiben gleich (2–4); „mehr Volumen" entsteht v. a. durch die zusätzlichen Übungen (Face Pull, RDL, Waden, ggf. Core) und die höhere Frequenz im Ganzkörper-System.
 
 ---
 
@@ -822,7 +858,7 @@ Priorität für Fettverlust:
 2. Nach 2 Trainingseinheiten je **20–30 Min Cardio**
 3. Optional am Wochenende ein längerer Spaziergang (60–90 Min)
 
-Puls ca. 120–140 bpm. Nicht als „Fettverbrennungstrick", sondern für Kalorienverbrauch, Herz-Kreislauf-Gesundheit, Regeneration. Bringt mehr als hartes HIIT, ohne die Regeneration für Muskelaufbau zu gefährden.
+Puls ca. 120–140 bpm. Nicht als „Fettverbrennungstrick", sondern für Kalorienverbrauch, Herz-Kreislauf-Gesundheit, Regeneration. Ruhiges Cardio (LISS) ist die Basis, weil es die Erholung kaum belastet. **HIIT ist okay, wenn die Regeneration es zulässt** – dann aber max. 1×/Woche und nicht am Tag vor schwerem Bein- oder Drücktraining. Die Schritte (NEAT) bleiben der wichtigste Hebel.
 
 **Cardio-Optionen nach Training A:** Laufband 20–30 Min (5–8 % Steigung, 5–6 km/h) · Crosstrainer 20–30 Min · Fahrrad 25–35 Min.
 
@@ -888,6 +924,10 @@ Jede Einheit dokumentieren – wer nicht dokumentiert, trainiert oft zufällig.
 4. Jede Einheit komplett „zerstören"
 5. Mehr Übungen statt mehr Progression
 
+---
+
+> **Evidenz & Einordnung:** Die Empfehlungen folgen gängigen sport- und ernährungswissenschaftlichen Leitlinien (Hypertrophie-Volumen ~10–20 Sätze/Muskel/Woche, Protein ~1,6–2,2 g/kg Körpergewicht, progressive Overload als Hauptreiz, Kreatin und Omega-3 als die am besten belegten Supplemente). Sie sind bewusst auf langfristige Umsetzbarkeit ausgelegt, nicht auf das theoretische Maximum. Alle Gewichts-, Kalorien- und Nährwertangaben sind individuelle Richt-/Schätzwerte und werden anhand deiner realen Entwicklung (Kapitel 7) angepasst.
+
 
 \newpage
 
@@ -900,7 +940,7 @@ Häufiger Fehler: zu viele Supplements kaufen, bevor Ernährung und Training sti
 | Tier | Supplements |
 |---|---|
 | **S (kaufen)** | Kreatin · Whey · Iso Clear |
-| **A (situativ sinnvoll)** | Vitamin D · Magnesium |
+| **A (situativ sinnvoll)** | Vitamin D · Magnesium · Omega-3 (Algenöl) |
 | **B (optional)** | Elektrolyte · Multivitamin |
 | **C (nicht notwendig)** | BCAA · EAA · Fatburner · Testobooster · Detox |
 
@@ -935,6 +975,13 @@ Sinnvoll bei Mangel (optimal: Blutwert bestimmen). 1.000–4.000 IE täglich zu 
 
 Kann bei Muskelkrämpfen, Schlaf und Regeneration unterstützen. 200–400 mg, abends.
 
+### Omega-3 (Algenöl) ⭐⭐⭐⭐
+
+Für dich besonders relevant, **weil du keinen Fisch isst** – damit fehlt die wichtigste natürliche EPA/DHA-Quelle. Algenöl ist die saubere, rein pflanzliche Alternative (Fischöl ist wegen des Fisch-Verzichts hier nicht passend).
+- **Dosierung:** ca. 250–500 mg EPA/DHA täglich, zu einer fetthaltigen Mahlzeit.
+- **Nutzen:** unterstützt Herz-Kreislauf-System, Entzündungsregulation und Regeneration; relevant bei Bürojob (viel Sitzen) und im Defizit.
+- Kosten: ca. 10–15 €/Monat.
+
 ### Elektrolyte ⭐⭐⭐
 
 Sinnvoll bei Hitze, viel Schwitzen, Alkoholabend, Krankheit. An normalen Tagen nicht nötig.
@@ -955,6 +1002,7 @@ Kann kleine Lücken schließen, ersetzt aber kein Gemüse/Obst/gute Ernährung.
 | Wann | Supplement |
 |---|---|
 | Jeden Morgen | Kreatin 5 g · (Vitamin D 1.000–4.000 IE bei Bedarf) |
+| Zu einer Mahlzeit | Omega-3 Algenöl 250–500 mg EPA/DHA |
 | Trainingstage | Whey **oder** Iso Clear 40 g |
 | Ruhetage | Whey nur wenn nötig |
 | Abends (optional) | Magnesium 200–400 mg |
@@ -962,9 +1010,9 @@ Kann kleine Lücken schließen, ersetzt aber kein Gemüse/Obst/gute Ernährung.
 ## Monatliche Kosten
 
 - **Minimal** (Kreatin + Whey): ca. 15–25 €/Monat
-- **Komfort** (Kreatin + Whey + Iso Clear + Vitamin D + Magnesium): ca. 30–50 €/Monat
+- **Komfort** (Kreatin + Whey + Iso Clear + Vitamin D + Magnesium + Algenöl): ca. 40–65 €/Monat
 
-**Sofort kaufen:** Kreatin Monohydrat, Whey. **Bereits vorhanden:** Iso Clear, Sahne-Protein. **Optional:** Vitamin D, Magnesium. Mehr brauchst du aktuell nicht.
+**Sofort kaufen:** Kreatin Monohydrat, Whey. **Bereits vorhanden:** Iso Clear, Sahne-Protein. **Sinnvoll ergänzen (Fisch-Verzicht):** Omega-3 Algenöl. **Optional:** Vitamin D, Magnesium. Mehr brauchst du aktuell nicht.
 
 
 \newpage

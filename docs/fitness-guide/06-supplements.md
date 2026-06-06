@@ -7,7 +7,7 @@ Häufiger Fehler: zu viele Supplements kaufen, bevor Ernährung und Training sti
 | Tier | Supplements |
 |---|---|
 | **S (kaufen)** | Kreatin · Whey · Iso Clear |
-| **A (situativ sinnvoll)** | Vitamin D · Magnesium |
+| **A (situativ sinnvoll)** | Vitamin D · Magnesium · Omega-3 (Algenöl) |
 | **B (optional)** | Elektrolyte · Multivitamin |
 | **C (nicht notwendig)** | BCAA · EAA · Fatburner · Testobooster · Detox |
 
@@ -42,6 +42,13 @@ Sinnvoll bei Mangel (optimal: Blutwert bestimmen). 1.000–4.000 IE täglich zu 
 
 Kann bei Muskelkrämpfen, Schlaf und Regeneration unterstützen. 200–400 mg, abends.
 
+### Omega-3 (Algenöl) ⭐⭐⭐⭐
+
+Für dich besonders relevant, **weil du keinen Fisch isst** – damit fehlt die wichtigste natürliche EPA/DHA-Quelle. Algenöl ist die saubere, rein pflanzliche Alternative (Fischöl ist wegen des Fisch-Verzichts hier nicht passend).
+- **Dosierung:** ca. 250–500 mg EPA/DHA täglich, zu einer fetthaltigen Mahlzeit.
+- **Nutzen:** unterstützt Herz-Kreislauf-System, Entzündungsregulation und Regeneration; relevant bei Bürojob (viel Sitzen) und im Defizit.
+- Kosten: ca. 10–15 €/Monat.
+
 ### Elektrolyte ⭐⭐⭐
 
 Sinnvoll bei Hitze, viel Schwitzen, Alkoholabend, Krankheit. An normalen Tagen nicht nötig.
@@ -62,6 +69,7 @@ Kann kleine Lücken schließen, ersetzt aber kein Gemüse/Obst/gute Ernährung.
 | Wann | Supplement |
 |---|---|
 | Jeden Morgen | Kreatin 5 g · (Vitamin D 1.000–4.000 IE bei Bedarf) |
+| Zu einer Mahlzeit | Omega-3 Algenöl 250–500 mg EPA/DHA |
 | Trainingstage | Whey **oder** Iso Clear 40 g |
 | Ruhetage | Whey nur wenn nötig |
 | Abends (optional) | Magnesium 200–400 mg |
@@ -69,6 +77,6 @@ Kann kleine Lücken schließen, ersetzt aber kein Gemüse/Obst/gute Ernährung.
 ## Monatliche Kosten
 
 - **Minimal** (Kreatin + Whey): ca. 15–25 €/Monat
-- **Komfort** (Kreatin + Whey + Iso Clear + Vitamin D + Magnesium): ca. 30–50 €/Monat
+- **Komfort** (Kreatin + Whey + Iso Clear + Vitamin D + Magnesium + Algenöl): ca. 40–65 €/Monat
 
-**Sofort kaufen:** Kreatin Monohydrat, Whey. **Bereits vorhanden:** Iso Clear, Sahne-Protein. **Optional:** Vitamin D, Magnesium. Mehr brauchst du aktuell nicht.
+**Sofort kaufen:** Kreatin Monohydrat, Whey. **Bereits vorhanden:** Iso Clear, Sahne-Protein. **Sinnvoll ergänzen (Fisch-Verzicht):** Omega-3 Algenöl. **Optional:** Vitamin D, Magnesium. Mehr brauchst du aktuell nicht.

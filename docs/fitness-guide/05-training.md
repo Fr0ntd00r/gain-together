@@ -83,12 +83,13 @@ Rotation: Woche 1 = A / B / A · Woche 2 = B / A / B.
 | 5 | Preacher Curl Maschine | 3 | 8–12 | 30 kg | Doppelprogr. | SZ-Curl · Kabelcurl · einarmige Preacher Curl |
 | 6 | Rudern eng | 3 | 8–12 | 45 kg | Doppelprogr. | brustgestütztes Rudern · T-Bar · Rudern normal |
 | + | **Seitheben** (empfohlen ergänzen) | 2–3 | 12–20 | – | Doppelprogr. | KH · Kabel · Maschine |
+| + | **Face Pull** (empfohlen ergänzen) | 2–3 | 12–20 | – | Doppelprogr. | Reverse Pec Deck · Reverse Flys KH |
 
 **Technik Bankdrücken:** Schulterblätter nach hinten, Brust raus, Füße fest im Boden. Fehler: Ellenbogen komplett ausstellen, Hantel aufspringen lassen.
 
-**Volumen Training A:** Brust 8 · Schulter 5–8 · Bizeps 3 · Rücken 3.
+**Volumen Training A:** Brust 8 · Schulter (vorne) 5–8 · Schulter (hinten) 2–3 · Bizeps 3 · Rücken 3.
 
-> Wichtigste Einzeländerung gegenüber deinem bisherigen Training: **Seitheben 2–3 Sätze ergänzen** – die seitliche Schulter bekommt sonst wenig direkte Arbeit und bringt optisch (V-Form) den größten Nutzen.
+> Wichtigste Einzeländerungen gegenüber deinem bisherigen Training: **Seitheben** (seitliche Schulter, V-Form) und **Face Pull** (hintere Schulter) 2–3 Sätze ergänzen. Bei viel Drück-Volumen und Bürojob (Schreibtischhaltung) ist die hintere Schulter die am häufigsten vernachlässigte Muskelgruppe – sie verbessert Schultergesundheit, Haltung und Optik.
 
 ### Training B (Beine / Rücken / Trizeps) — ca. 60–80 Min
 
@@ -97,23 +98,33 @@ Wichtigster Tag für Fettverlust (Beine & Rücken = größte Muskelgruppen).
 | # | Übung | Sätze | Wdh. | Start | Progression | Alternativen |
 |---|---|---|---|---|---|---|
 | 1 | Beinpresse | 4 | 8–15 | 100–130 kg | bei 15×4 → +10 kg | Hackenschmidt · Multipresse-Kniebeuge · Goblet Squat |
-| 2 | Beinbeuger (sitzend) | 3 | 10–15 | – | Doppelprogr. | Beinbeuger liegend · rumänisches Kreuzheben |
-| 3 | Latziehen eng | 3 | 8–12 | 59 kg | bei 12/12/12 → +5 kg | Latziehen breit · Assist-Klimmzüge · einarmige Lat-Maschine |
-| 4 | Rudern normal | 3 | 8–12 | 45 kg | Doppelprogr. | brustgestütztes Rudern · T-Bar · Rudern eng |
-| 5 | Trizeps Pushdown (Kabel) | 3 | 10–15 | 22 kg | Doppelprogr. | Rope Pushdown · Trizepsstange · einarmig Kabel |
-| 6 | Trizeps SZ liegend | 3 | 8–12 | 15 kg | Doppelprogr. | Dips Assist Machine · Overhead Extension |
-| 7 | Adduktoren *(optional)* | 2 | 12–20 | 50 kg | Doppelprogr. | Abduktoren · Ausfallschritte |
-| + | **Wadenheben** (besser als Adduktoren ergänzen) | 3 | 12–20 | – | Doppelprogr. | – |
+| 2 | Beinbeuger (sitzend) | 3 | 10–15 | – | Doppelprogr. | Beinbeuger liegend |
+| 3 | **Rum. Kreuzheben (Hip-Hinge)** | 2–3 | 8–12 | – | Doppelprogr. | Hyperextension · Hip Thrust |
+| 4 | Latziehen eng | 3 | 8–12 | 59 kg | bei 12/12/12 → +5 kg | Latziehen breit · Assist-Klimmzüge · einarmige Lat-Maschine |
+| 5 | Rudern normal | 3 | 8–12 | 45 kg | Doppelprogr. | brustgestütztes Rudern · T-Bar · Rudern eng |
+| 6 | Trizeps Pushdown (Kabel) | 3 | 10–15 | 22 kg | Doppelprogr. | Rope Pushdown · Trizepsstange · einarmig Kabel |
+| 7 | Trizeps SZ liegend | 3 | 8–12 | 15 kg | Doppelprogr. | Dips Assist Machine · Overhead Extension |
+| 8 | **Wadenheben** | 3 | 12–20 | – | Doppelprogr. | stehend · sitzend · an der Beinpresse |
+| + | Adduktoren *(optional)* | 2 | 12–20 | 50 kg | Doppelprogr. | Abduktoren · Ausfallschritte |
 
 **Technik Beinpresse:** volle Kontrolle, nicht aufspringen, tiefe ROM. Fehler: halbe Wiederholungen, Gewicht statt Bewegungsumfang.
+**Technik RDL/Hip-Hinge:** Hüfte nach hinten schieben, Rücken neutral, leichte Kniebeugung, Stange/Gewicht nah am Körper – Dehnung in der hinteren Oberschenkelmuskulatur spüren. Anfangs leicht und sauber, dann steigern.
 
-**Volumen Training B:** Beine 7–10 · Rücken 6 · Trizeps 6 · Waden optional 3.
+**Volumen Training B:** Beine (Quad) 7–10 · hintere Kette (Beinbeuger + RDL) 5–6 · Rücken 6 · Trizeps 6 · Waden 3.
+
+### Core (optional, 1–2×/Woche)
+
+Für dein Ziel kein Muss (Bauchdefinition kommt v. a. über den Fettverlust), aber für Rumpfkraft & Haltung sinnvoll. 2–3 Sätze, am Ende einer Einheit oder als kurze Eigeneinheit:
+
+- **Plank** (Unterarmstütz) · **Cable Crunch** · **Hanging Knee Raise / Beinheben** · **Ab-Wheel** (fortgeschritten)
 
 ### Größte Lücken im ursprünglichen Training (behoben)
 
 1. **Beinbeuger fehlten** (hintere Oberschenkel) → ergänzt, Priorität hoch.
-2. Kaum Hüftstreckung/Gesäß → optional rumänisches Kreuzheben / Hyperextensions / Hip Thrust.
-3. Zu viel Schultervolumen vorne → auf Schulterpresse + Seitheben reduzieren.
+2. **Hüftstreckung/Gesäß** → rumänisches Kreuzheben jetzt fest eingeplant (2–3 Sätze), Alternativen Hyperextension / Hip Thrust.
+3. **Hintere Schulter** fehlte → Face Pull in Training A ergänzt.
+4. **Waden** fehlten → jetzt feste Übung statt optional.
+5. Zu viel Schultervolumen vorne → auf Schulterpresse + Seitheben reduziert.
 
 ---
 
@@ -141,12 +152,34 @@ Rotation: Woche 1 = GK A / GK B / GK A · Woche 2 = GK B / GK A / GK B.
 | Schrägbank KH | 3 × 8–12 |
 | Rudern eng | 3 × 8–12 |
 | Leg Extension | 4 × 12–15 |
+| Beinbeuger (sitzend) | 3 × 10–15 |
 | Lat-Maschine einarmig | 3 × 10–15 |
 | Seitheben | 3 × 15–20 |
 | Trizeps SZ | 2 × 10–15 |
 | Preacher Curl einarmig | 2 × 10–15 |
 
+> Hinweis: In Ganzkörper A wird die Beinrückseite über die Beinpresse mit abgedeckt; wer hier mehr will, ergänzt 2–3 Sätze rumänisches Kreuzheben. Für die hintere Schulter optional 2 Sätze Face Pull in eine der beiden Einheiten.
+
 > Push/Pull/Legs ist aktuell **nicht** sinnvoll (zu wenig Frequenz bei 3 Tagen). A/B bzw. Ganzkörper-A/B ist überlegen.
+
+---
+
+## 5.7a 12-Monats-Periodisierung (Volumen & Phasen)
+
+Die Übungen bleiben über Monate weitgehend gleich – was sich ändert, ist **Volumen und Intensität**. Konkret: Du bewegst dich innerhalb der Wochen-Satzkorridore aus **5.4** im Lauf des Jahres vom unteren ans obere Ende. Die Phasen sind deckungsgleich mit der 12-Monats-Roadmap (→ Kapitel 7.2), die Kraftziele stehen in **5.11** bzw. der Kraftentwicklungs-Tabelle in Kapitel 7.2 – hier nur die Trainingssteuerung.
+
+| Phase | Monat | System | Schwerpunkt | Wochen-Sätze/Muskel | Ø RIR letzter Satz | Deload |
+|---|---|---|---|---|---|---|
+| 1 · Adaptation | 1–3 | A/B (System 1) | Technik, Gewohnheit, Progression lernen | unteres Ende (Brust 10 · Rücken 12 · Beine 10) | 2 | bei Bedarf um Wo. 8–10 |
+| 2 · Akkumulation | 4–6 | Wechsel auf Ganzkörper-A/B (System 2) | Frequenz & Volumen aufbauen | mittel (Brust 12 · Rücken 14 · Beine 12) | 1–2 | alle 8 Wochen |
+| 3 · Intensivierung | 7–9 | Ganzkörper-A/B | näher ans Versagen, Hüftstreckung/Core fest dazu | oberes Ende (Brust 14 · Rücken 16 · Beine 14) | 1 (Isolation 0–1) | alle 6–8 Wochen |
+| 4 · Erhalt/Feinschliff | 10–12 | A/B oder Ganzkörper | Kraft halten + Aufbau im Zielgewicht | mittel–hoch, nach Erholung | 1–2 | regelmäßig alle 8 Wochen |
+
+**Steuerungsregeln:**
+- Volumen nur erhöhen, wenn Erholung, Schlaf und Progression stimmen – sonst Phase verlängern, nicht überspringen.
+- Mehr Volumen ⇒ entsprechend mehr Nahrung/Schlaf nötig; im stärkeren Defizit (Phase 3) eher am **unteren** Ende des jeweiligen Korridors bleiben.
+- Deload-Mechanik unverändert wie in **5.10** (Sätze −50 %, Gewicht −10–15 %).
+- Sätze pro Übung bleiben gleich (2–4); „mehr Volumen" entsteht v. a. durch die zusätzlichen Übungen (Face Pull, RDL, Waden, ggf. Core) und die höhere Frequenz im Ganzkörper-System.
 
 ---
 
@@ -158,7 +191,7 @@ Priorität für Fettverlust:
 2. Nach 2 Trainingseinheiten je **20–30 Min Cardio**
 3. Optional am Wochenende ein längerer Spaziergang (60–90 Min)
 
-Puls ca. 120–140 bpm. Nicht als „Fettverbrennungstrick", sondern für Kalorienverbrauch, Herz-Kreislauf-Gesundheit, Regeneration. Bringt mehr als hartes HIIT, ohne die Regeneration für Muskelaufbau zu gefährden.
+Puls ca. 120–140 bpm. Nicht als „Fettverbrennungstrick", sondern für Kalorienverbrauch, Herz-Kreislauf-Gesundheit, Regeneration. Ruhiges Cardio (LISS) ist die Basis, weil es die Erholung kaum belastet. **HIIT ist okay, wenn die Regeneration es zulässt** – dann aber max. 1×/Woche und nicht am Tag vor schwerem Bein- oder Drücktraining. Die Schritte (NEAT) bleiben der wichtigste Hebel.
 
 **Cardio-Optionen nach Training A:** Laufband 20–30 Min (5–8 % Steigung, 5–6 km/h) · Crosstrainer 20–30 Min · Fahrrad 25–35 Min.
 
@@ -223,3 +256,7 @@ Jede Einheit dokumentieren – wer nicht dokumentiert, trainiert oft zufällig.
 3. Nicht nah genug ans Muskelversagen
 4. Jede Einheit komplett „zerstören"
 5. Mehr Übungen statt mehr Progression
+
+---
+
+> **Evidenz & Einordnung:** Die Empfehlungen folgen gängigen sport- und ernährungswissenschaftlichen Leitlinien (Hypertrophie-Volumen ~10–20 Sätze/Muskel/Woche, Protein ~1,6–2,2 g/kg Körpergewicht, progressive Overload als Hauptreiz, Kreatin und Omega-3 als die am besten belegten Supplemente). Sie sind bewusst auf langfristige Umsetzbarkeit ausgelegt, nicht auf das theoretische Maximum. Alle Gewichts-, Kalorien- und Nährwertangaben sind individuelle Richt-/Schätzwerte und werden anhand deiner realen Entwicklung (Kapitel 7) angepasst.

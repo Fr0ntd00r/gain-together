@@ -11,12 +11,13 @@ Grundregel: Du musst nicht jeden Tag perfekt sein. Du musst nur **Protein treffe
 | Zeit | Mahlzeit | kcal | Protein | Ballast. |
 |---|---|---|---|---|
 | 07:00 | Protein-Shake (40 g Whey · 300 ml Milch · 10 g Flohsamen) | 320 | 42 g | 8 g |
-| 12:00 | Hähnchen Bowl (200 g Hähnchen · 300 g Kartoffeln · 300 g Brokkoli) | 650 | 55 g | 12 g |
+| 12:00 | Reis Bowl XXL (250 g Hähnchen · 100 g Reis · 300 g Gemüse) | 850 | 65 g | 10 g |
 | 16:00 | Skyr Maximum (500 g Skyr · 100 g Beeren · 10 g Flohsamen) | 370 | 55 g | 12 g |
+| 18:00 | Whey + Flohsamenschalen (40 g Whey · 10 g Flohsamen) | 170 | 32 g | 8 g |
 | 20:00 | Rinderhackpfanne (250 g Hack · 80 g Reis · 200 g Paprika · 200 g Zucchini) | 850 | 60 g | 10 g |
-| **Summe** | | **≈ 2.190** | **≈ 212 g** | **≈ 42 g** |
+| **Summe** | | **≈ 2.560** | **≈ 254 g** | **≈ 48 g** |
 
-→ Optional + 1 Proteinpudding ≈ 2.350–2.400 kcal.
+→ Trifft den Trainingstag-Korridor (2.500–2.700 kcal). Wer Protein bewusst bei ~190–210 g halten will, lässt den 18:00-Snack weg (≈ 2.390 kcal) oder ersetzt die Reis Bowl XXL durch die normale Hähnchen Bowl (650 kcal). Hungrige Tage: + 1 Proteinpudding ≈ 2.700 kcal (oberes Ende).
 
 ### Komfort-Trainingstag (Stress/wenig Zeit)
 

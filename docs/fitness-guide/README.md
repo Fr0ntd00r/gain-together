@@ -65,7 +65,7 @@ Vorhandene Supplements: **Whey (mit Geschmack)**, **Sahne-Protein**, **Iso Clear
 
 ## PDF
 
-Die fertige, druckbare PDF (27 Seiten) liegt direkt im Repo:
+Die fertige, druckbare PDF (28 Seiten) liegt direkt im Repo:
 
 ➡️ **[Fitness-Guide.pdf](./Fitness-Guide.pdf)**
 
@@ -75,11 +75,12 @@ Alle Kapitel sind außerdem in einer Gesamt-Markdown-Datei zusammengefasst:
 
 ### PDF neu erzeugen
 
-Die PDF wurde mit Python (`markdown` + `weasyprint`) aus der Gesamtdatei generiert (Skript: [`build-pdf.py`](./build-pdf.py)):
+`Fitness-Guide-Komplett.md` ist **generiert** (aus den Kapiteldateien) und sollte nicht von Hand bearbeitet werden. Nach Änderungen an einer Kapiteldatei zuerst die Gesamtdatei neu bauen, dann die PDF:
 
 ```bash
 pip install markdown weasyprint
-python3 docs/fitness-guide/build-pdf.py
+python3 docs/fitness-guide/build-combined.py   # baut Fitness-Guide-Komplett.md neu
+python3 docs/fitness-guide/build-pdf.py         # baut Fitness-Guide.pdf
 ```
 
 Alternativ mit Pandoc oder md-to-pdf:
@@ -93,6 +94,14 @@ pandoc docs/fitness-guide/Fitness-Guide-Komplett.md \
 # Variante md-to-pdf (Node)
 npx md-to-pdf docs/fitness-guide/Fitness-Guide-Komplett.md
 ```
+
+## App-Integration (Training)
+
+Der Trainingsplan ist zusätzlich als ladbares SQL-Seed aufbereitet (passend zum Datenmodell der App: `exercises`, `workout_templates`, `template_exercises`):
+
+➡️ **[`supabase/seed/fitness_guide_training_seed.sql`](../../supabase/seed/fitness_guide_training_seed.sql)** — 19 offizielle Übungen + 4 Pläne (Training A/B + Ganzkörper A/B). Aufräumen: `fitness_guide_training_cleanup.sql`.
+
+Im Supabase SQL-Editor ausführen (läuft als service_role, idempotent). Ein optionaler Block am Ende setzt zusätzlich den Wochenplan **Mo/Mi/Fr = A/B/A** für deinen Account. Eine Ernährungs-/Makro-Funktion existiert in der App aktuell nicht – die Ernährungskapitel bleiben vorerst reines Nachschlagewerk.
 
 ## Wichtige Einordnung
 

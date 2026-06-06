@@ -15,14 +15,16 @@ Ziel pro Frühstück: 35–60 g Protein · 8–15 g Ballaststoffe · 300–700 k
 | 1 | **Protein-Shake Standard** ⭐⭐⭐⭐⭐ | 40 g Whey · 300 ml Milch 1,5 % · 10 g Flohsamenschalen | 320 | 42 g | 18 g | 7 g | 8 g |
 | 1b | Protein-Shake Deluxe | + 50 g Haferflocken zum Standard | 510 | 48 g | 48 g | 10 g | 13 g |
 | 2 | **Skyr Power Bowl** ⭐⭐⭐⭐⭐ (Favorit) | 500 g Skyr · 150 g Beeren · 50 g Haferflocken · 10 g Flohsamenschalen | 550 | 58 g | 45 g | 5 g | 14 g |
-| 3 | Skyr Light | 500 g Skyr · 150 g Beeren (+10 g Flohsamen → 13 g Ballast.) | 350 | 52 g | 18 g | 1 g | 5 g |
-| 4 | Eier & Skyr | 4 Eier · 300 g Skyr | 500 | 48 g | – | 22 g | 0 g |
-| 5 | Hotel-Frühstück | 4 Eier · 200 g Skyr · 100 g Putenaufschnitt | 550 | 60 g | – | 20 g | 0–2 g |
-| 6 | Overnight Oats | 50 g Haferflocken · 300 g Skyr · 150 g Beeren · 10 g Flohsamen | 500 | 40 g | – | – | 14 g |
-| 7 | Iso-Clear Frühstück | 40 g Iso Clear · 1 Banane | 220 | 30–32 g | – | – | 3 g |
-| 8 | Büro Express | 1 Proteinpudding · 40 g Whey | 350 | 55 g | – | – | 1–2 g |
-| 9 | Wochenende | 4 Eier · 2 Protein-Wraps · 100 g Putenaufschnitt | 650 | 55 g | – | – | 8 g |
-| 10 | **Maximal-Sättigung** ⭐⭐⭐⭐⭐ | 500 g Skyr · 50 g Haferflocken · 150 g Beeren · 10 g Flohsamen · 20 g Whey | 650 | 75 g | – | – | 15 g |
+| 3 | Skyr Light | 500 g Skyr · 150 g Beeren | 350 | 52 g | 18 g | 1 g | 5 g |
+| 4 | Eier & Skyr | 4 Eier · 300 g Skyr | 500 | 48 g | 8 g | 22 g | 0 g |
+| 5 | Hotel-Frühstück | 4 Eier · 200 g Skyr · 100 g Putenaufschnitt | 550 | 60 g | 6 g | 20 g | 0–2 g |
+| 6 | Overnight Oats | 50 g Haferflocken · 300 g Skyr · 150 g Beeren · 10 g Flohsamen | 500 | 40 g | 48 g | 9 g | 14 g |
+| 7 | Iso-Clear Frühstück | 40 g Iso Clear · 1 Banane | 220 | 30–32 g | 26 g | 1 g | 3 g |
+| 8 | Büro Express | 1 Proteinpudding · 40 g Whey | 350 | 55 g | 10 g | 4 g | 1–2 g |
+| 9 | Wochenende | 4 Eier · 2 Protein-Wraps · 100 g Putenaufschnitt | 650 | 55 g | 24 g | 30 g | 8 g |
+| 10 | **Maximal-Sättigung** ⭐⭐⭐⭐⭐ | 500 g Skyr · 50 g Haferflocken · 150 g Beeren · 10 g Flohsamen · 20 g Whey | 650 | 75 g | 52 g | 8 g | 15 g |
+
+*Skyr Light: mit +10 g Flohsamenschalen steigen die Ballaststoffe auf ≈ 13 g (kcal nahezu unverändert).*
 
 **Tipp Protein-Shake ohne Milch:** Milch durch Wasser ersetzen → ca. 180 kcal / 32 g Protein.
 
@@ -45,7 +47,7 @@ Wichtigste Mahlzeit für den Alltag: bürotauglich, wenig Aufwand, hoher Protein
 | 5 | Steak Bowl | 250 g Steak · 300 g Kartoffeln · 250 g Gemüse | 750 | 60 g | 50 g | 22 g | 10 g |
 | 6 | Komfort-Version (5 Min) | 250 g Fertig-Hähnchen · 250 g Mikrowellenreis · 300 g TK-Gemüse | 700 | 55 g | 65 g | 10 g | 10 g |
 | 7 | Supermarkt Express | 250 g Hähnchenaufschnitt · 1 Proteinpudding · 150 g Salat | 500 | 65 g | 15 g | 10 g | 4 g |
-| 8 | Kantinen-Regel | *System:* 1. Protein 2. Gemüse (≥300 g) 3. Kartoffeln/Reis | 600–800 | 40–60 g | – | – | 8–12 g |
+| 8 | Kantinen-Regel | *System:* 1. Protein 2. Gemüse (≥300 g) 3. Kartoffeln/Reis | 600–800 | 40–60 g | 50–70 g | 15–25 g | 8–12 g |
 | 9 | Kartoffel-Hähnchen-Salat | 250 g Hähnchen · 350 g Kartoffeln · 200 g Salat · 100 g Gurke | 650 | 60 g | 55 g | 8 g | 10 g |
 | 10 | Büro Notfall | 40 g Whey · 2 Proteinpudding · 1 Banane | 600 | 70 g | 35 g | 8 g | 3 g |
 | 11 | Rinderhack Bowl | 200 g Rinderhack 5 % · 250 g Kartoffeln · 300 g Gemüse | 700 | 50 g | 40 g | 22 g | 10 g |
@@ -78,8 +80,8 @@ Hier darf der Großteil der Kalorien gegessen werden. Vier Regeln: **1. Protein 
 | 8 | Reis Bowl (Leg Day) | 250 g Hähnchen · 100 g Reis (trocken) · 300 g Gemüse | 850 | 65 g | 80 g | 8 g | 10 g |
 | 9 | Ofenhähnchen (höchstes Protein) | 300 g Hähnchen · 400 g Kartoffeln · 300 g Gemüse | 850 | 75 g | 60 g | 10 g | 14 g |
 | 10 | Komfort-Version (5 Min) | 250 g Fertig-Hähnchen · 250 g Mikrowellenreis · 300 g TK-Gemüse | 700 | 55 g | 60 g | 10 g | 10 g |
-| 11 | Skyr Abendessen (kalorienarmer Tag) | 500 g Skyr · 100 g Beeren · 50 g Haferflocken | 550 | 58 g | – | – | 10 g |
-| 12 | Burger Bowl | 250 g Rinderhack · Salat · Gurke · Tomate · Kartoffelspalten | 800 | 55 g | – | – | 10 g |
+| 11 | Skyr Abendessen (kalorienarmer Tag) | 500 g Skyr · 100 g Beeren · 50 g Haferflocken | 550 | 58 g | 45 g | 4 g | 10 g |
+| 12 | Burger Bowl | 250 g Rinderhack · Salat · Gurke · Tomate · Kartoffelspalten | 800 | 55 g | 55 g | 30 g | 10 g |
 
 ### Flexible Abend-Situationen (20 %)
 
@@ -110,8 +112,8 @@ Snacks sind **kein Pflichtbestandteil** – wenn du mit den Hauptmahlzeiten 200 
 | 6 | Iso Clear | 40 g Iso Clear | 120 | 30 g | 1 g | 0 g | 0 g |
 | 7 | Quark Premium | 500 g Magerquark · 100 g Beeren | 380 | 60 g | 18 g | 2 g | 4 g |
 | 8 | **Maximaler Sättigungssnack** ⭐⭐⭐⭐⭐ | 500 g Skyr · 20 g Whey · 10 g Flohsamen · 100 g Beeren | 450 | 75 g | 20 g | 2 g | 12 g |
-| 9 | Büro Notfall | 1 Proteinpudding · 40 g Whey | 350 | 55 g | 15 g | 5 g | – |
-| 10 | Reise Snack | 40 g Iso Clear · 1 Proteinriegel | 320 | 50 g | 20 g | 7 g | – |
+| 9 | Büro Notfall | 1 Proteinpudding · 40 g Whey | 350 | 55 g | 15 g | 5 g | 1 g |
+| 10 | Reise Snack | 40 g Iso Clear · 1 Proteinriegel | 320 | 50 g | 20 g | 7 g | 1–2 g |
 
 Weitere Varianten: Skyr Pur (500 g = 300 kcal/55 g P) · Quark Maximum (500 g Quark + 100 g Beeren + 10 g Flohsamen = 400 kcal/60 g P/12 g Ballast.) · Eier-Snack (4 gekochte Eier = 300 kcal/28 g P) · doppelter Proteinpudding (300–400 kcal/40–50 g P).
 
