@@ -120,21 +120,32 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- ---------------------------------------------------------------------
--- 4) OPTIONAL: Wochenplan (Mo/Mi/Fr = A/B/A) für DEINEN Account.
---    schedule_rules.user_id ist NOT NULL + FK auf auth.users -> nicht
---    global seedbar. Bei Bedarf untenstehenden Block einkommentieren
---    (läuft als service_role; 'me' wird per E-Mail ermittelt).
+-- 4) WOCHENPLAN (Mo/Mi/Fr = A/B/A) für DEINEN Account.
+--    schedule_rules.user_id ist NOT NULL + FK auf auth.users -> wird hier
+--    an einen konkreten Account gebunden: zuerst per E-Mail, sonst der
+--    älteste vorhandene Account. slot_index: 0=Mo .. 6=So.
+--    Anpassen/entfernen falls nicht gewünscht.
 -- ---------------------------------------------------------------------
--- DO $$
--- DECLARE me uuid;
--- BEGIN
---   SELECT id INTO me FROM auth.users WHERE lower(email)=lower('alltimegaminghd@gmail.com') LIMIT 1;
---   IF me IS NULL THEN RAISE NOTICE 'Kein Account gefunden – Block übersprungen.'; RETURN; END IF;
---   INSERT INTO public.schedule_settings (user_id, mode) VALUES (me,'weekly')
---     ON CONFLICT (user_id) DO UPDATE SET mode='weekly';
---   INSERT INTO public.schedule_rules (user_id, mode, slot_index, template_id) VALUES
---     (me,'weekly',0,'fc100000-0000-4000-8000-000000000001'),  -- Mo = Training A
---     (me,'weekly',2,'fc100000-0000-4000-8000-000000000002'),  -- Mi = Training B
---     (me,'weekly',4,'fc100000-0000-4000-8000-000000000001')   -- Fr = Training A
---   ON CONFLICT (user_id,mode,slot_index) DO UPDATE SET template_id=EXCLUDED.template_id;
--- END $$;
+DO $$
+DECLARE me uuid;
+BEGIN
+  SELECT id INTO me FROM auth.users WHERE lower(email)=lower('alltimegaminghd@gmail.com') LIMIT 1;
+  IF me IS NULL THEN
+    SELECT id INTO me FROM auth.users ORDER BY created_at ASC LIMIT 1;  -- Fallback: ältester Account
+  END IF;
+  IF me IS NULL THEN
+    RAISE NOTICE 'Kein Account in auth.users gefunden – Wochenplan übersprungen.';
+    RETURN;
+  END IF;
+
+  INSERT INTO public.schedule_settings (user_id, mode) VALUES (me,'weekly')
+    ON CONFLICT (user_id) DO UPDATE SET mode='weekly';
+
+  INSERT INTO public.schedule_rules (user_id, mode, slot_index, template_id) VALUES
+    (me,'weekly',0,'fc100000-0000-4000-8000-000000000001'),  -- Mo = Training A
+    (me,'weekly',2,'fc100000-0000-4000-8000-000000000002'),  -- Mi = Training B
+    (me,'weekly',4,'fc100000-0000-4000-8000-000000000001')   -- Fr = Training A
+  ON CONFLICT (user_id,mode,slot_index) DO UPDATE SET template_id=EXCLUDED.template_id;
+
+  RAISE NOTICE 'Wochenplan Mo/Mi/Fr = A/B/A für % gesetzt.', me;
+END $$;
