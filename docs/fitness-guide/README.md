@@ -63,13 +63,26 @@ Vorhandene Supplements: **Whey (mit Geschmack)**, **Sahne-Protein**, **Iso Clear
 | 6 | [06-supplements.md](./06-supplements.md) | Supplement-Ranking & persönliches Protokoll |
 | 7 | [07-tracking-roadmap-plateaus.md](./07-tracking-roadmap-plateaus.md) | Tracking-System, 12-Monats-Roadmap, Plateau-Management, Monatsreview, 90-Tage-Plan |
 
-## Eine PDF erstellen
+## PDF
 
-Alle Kapitel sind außerdem in einer Gesamtdatei zusammengefasst:
+Die fertige, druckbare PDF (27 Seiten) liegt direkt im Repo:
+
+➡️ **[Fitness-Guide.pdf](./Fitness-Guide.pdf)**
+
+Alle Kapitel sind außerdem in einer Gesamt-Markdown-Datei zusammengefasst:
 
 ➡️ **[Fitness-Guide-Komplett.md](./Fitness-Guide-Komplett.md)**
 
-Diese Datei lässt sich direkt in eine PDF umwandeln, z. B. mit:
+### PDF neu erzeugen
+
+Die PDF wurde mit Python (`markdown` + `weasyprint`) aus der Gesamtdatei generiert (Skript: [`build-pdf.py`](./build-pdf.py)):
+
+```bash
+pip install markdown weasyprint
+python3 docs/fitness-guide/build-pdf.py
+```
+
+Alternativ mit Pandoc oder md-to-pdf:
 
 ```bash
 # Variante Pandoc (LaTeX-Engine erforderlich)
