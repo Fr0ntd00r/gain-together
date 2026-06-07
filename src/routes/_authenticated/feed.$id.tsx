@@ -1,9 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronLeft, Trophy, Dumbbell, Award, Flame, Clock, Weight, ListChecks } from "lucide-react";
+import { adoptWorkoutAsTemplate } from "@/lib/api/workouts.functions";
+import { ChevronLeft, Trophy, Dumbbell, Award, Flame, Clock, Weight, ListChecks, Copy } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
+import { toast } from "sonner";
 import { formatDuration } from "@/lib/workout-timer";
 import { LikeButton, Comments } from "@/components/feed-social";
 
@@ -140,6 +144,8 @@ function WorkoutDetail({ workoutId, data }: { workoutId: string | null; data: an
         <Stat icon={ListChecks} label="Sätze" value={String(setCount)} />
       </div>
 
+      <AdoptButton workoutId={workoutId} />
+
       {(detail?.grouped ?? []).map(({ exercise, sets }, i) => (
         <div key={i} className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-baseline justify-between">
@@ -164,6 +170,29 @@ function WorkoutDetail({ workoutId, data }: { workoutId: string | null; data: an
         </div>
       ))}
     </div>
+  );
+}
+
+function AdoptButton({ workoutId }: { workoutId: string | null }) {
+  const adopt = useServerFn(adoptWorkoutAsTemplate);
+  const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  if (!workoutId) return null;
+  async function run() {
+    setSaving(true);
+    try {
+      const r = await adopt({ data: { workoutId: workoutId! } });
+      toast.success(`Als Vorlage gespeichert (${r.exercises} Übungen)`);
+      navigate({ to: "/templates" });
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally { setSaving(false); }
+  }
+  return (
+    <button onClick={run} disabled={saving}
+      className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card py-2.5 text-sm font-medium disabled:opacity-60">
+      <Copy className="h-4 w-4" /> {saving ? "Speichert…" : "Als eigene Vorlage speichern"}
+    </button>
   );
 }
 

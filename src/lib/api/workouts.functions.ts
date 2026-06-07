@@ -287,3 +287,48 @@ export const getProgressionSuggestion = createServerFn({ method: "POST" })
     }
     return { suggestion: recommendation, lastSession: { weight: topWeight, reps: maxReps, sets: lastSession.length } };
   });
+
+// Ein (eigenes oder Freundes-)Workout als eigene Vorlage übernehmen.
+export const adoptWorkoutAsTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { workoutId: string }) => z.object({ workoutId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    // RLS erlaubt Lesen eigener + Freundes-Workouts.
+    const { data: workout } = await supabase.from("workouts").select("name").eq("id", data.workoutId).maybeSingle();
+    if (!workout) throw new Error("Workout nicht gefunden oder kein Zugriff.");
+    const { data: sets } = await supabase.from("workout_sets")
+      .select("exercise_id,position,set_number,reps,weight")
+      .eq("workout_id", data.workoutId).order("position").order("set_number");
+    const list = (sets ?? []) as any[];
+    if (list.length === 0) throw new Error("Dieses Workout enthält keine Sätze.");
+
+    // Je Übung zusammenfassen: Satzanzahl + typische Wdh/Gewicht (Höchstwerte).
+    const groups = new Map<string, any[]>();
+    for (const s of list) {
+      const arr = groups.get(s.exercise_id) ?? [];
+      arr.push(s); groups.set(s.exercise_id, arr);
+    }
+    const ordered = Array.from(groups.entries())
+      .sort((a, b) => (a[1][0]?.position ?? 0) - (b[1][0]?.position ?? 0));
+
+    const { data: tmpl, error: tErr } = await supabase.from("workout_templates").insert({
+      name: `${workout.name ?? "Workout"} (Kopie)`,
+      description: "Aus dem Feed übernommen",
+      created_by: userId, is_public: false, is_official: false, category: "Übernommen",
+    }).select("id").single();
+    if (tErr || !tmpl) throw new Error(tErr?.message ?? "Konnte Vorlage nicht anlegen.");
+
+    const rows = ordered.map(([exId, exSets], i) => ({
+      template_id: tmpl.id,
+      exercise_id: exId,
+      position: i,
+      target_sets: exSets.length,
+      target_reps: Math.max(0, ...exSets.map((s: any) => Number(s.reps ?? 0))) || 10,
+      target_weight: Math.max(0, ...exSets.map((s: any) => Number(s.weight ?? 0))) || null,
+      rest_seconds: 90,
+    }));
+    const { error: teErr } = await supabase.from("template_exercises").insert(rows);
+    if (teErr) throw new Error(teErr.message);
+    return { templateId: tmpl.id, exercises: rows.length };
+  });

@@ -2,6 +2,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart } from "lucide-react";
 import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { de } from "date-fns/locale";
 
 // Gemeinsame Social-Bausteine für Feed-Liste und Feed-Detail.
 
@@ -45,7 +47,7 @@ export function Comments({ feedId }: { feedId: string }) {
       const ids = Array.from(new Set(list.map((c: any) => c.user_id)));
       let byId: Record<string, any> = {};
       if (ids.length) {
-        const { data: profs } = await supabase.from("profiles").select("id,username,display_name").in("id", ids);
+        const { data: profs } = await supabase.from("profiles").select("id,username,display_name,avatar_url").in("id", ids);
         byId = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
       }
       return list.map((c: any) => ({ ...c, profiles: byId[c.user_id] }));
@@ -60,18 +62,41 @@ export function Comments({ feedId }: { feedId: string }) {
     qc.invalidateQueries({ queryKey: ["comments", feedId] });
   }
   return (
-    <div className="mt-3 space-y-2 border-t border-border pt-3">
+    <div className="mt-3 space-y-3 border-t border-border pt-3">
       {(data ?? []).length === 0 && (
         <div className="text-xs text-muted-foreground">Noch keine Kommentare – sei der Erste.</div>
       )}
       {(data ?? []).map((c: any) => (
-        <div key={c.id} className="text-xs"><span className="font-medium">@{c.profiles?.username}</span> {c.content}</div>
+        <div key={c.id} className="flex items-start gap-2">
+          <Avatar profile={c.profiles} />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline gap-2">
+              <span className="truncate text-xs font-semibold">{c.profiles?.display_name ?? `@${c.profiles?.username ?? "?"}`}</span>
+              <span className="shrink-0 text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: de })}</span>
+            </div>
+            <div className="break-words text-sm">{c.content}</div>
+          </div>
+        </div>
       ))}
       <form onSubmit={submit} className="flex gap-2 pt-1">
         <input value={text} onChange={e => setText(e.target.value)} maxLength={500} placeholder="Kommentieren…"
           className="flex-1 rounded-lg border border-border bg-input px-3 py-1.5 text-xs" />
         <button type="submit" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">Senden</button>
       </form>
+    </div>
+  );
+}
+
+// Kleiner runder Avatar: Bild, sonst Initiale aus Anzeigename/Username.
+export function Avatar({ profile, size = 28 }: { profile?: { display_name?: string | null; username?: string | null; avatar_url?: string | null } | null; size?: number }) {
+  const label = profile?.display_name ?? profile?.username ?? "?";
+  const initial = label.trim().charAt(0).toUpperCase() || "?";
+  if (profile?.avatar_url) {
+    return <img src={profile.avatar_url} alt={label} style={{ width: size, height: size }} className="shrink-0 rounded-full object-cover" />;
+  }
+  return (
+    <div style={{ width: size, height: size }} className="grid shrink-0 place-items-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
+      {initial}
     </div>
   );
 }
