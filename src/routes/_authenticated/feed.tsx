@@ -48,6 +48,19 @@ function Feed() {
     },
   });
 
+  const { data: commentCounts } = useQuery({
+    queryKey: ["feed-comment-counts", (feed ?? []).map((f: any) => f.id).join(",")],
+    enabled: (feed ?? []).length > 0,
+    queryFn: async () => {
+      const ids = (feed ?? []).map((f: any) => f.id);
+      const { data } = await supabase.from("feed_comments").select("feed_id").in("feed_id", ids);
+      const counts: Record<string, number> = {};
+      for (const id of ids) counts[id] = 0;
+      for (const r of data ?? []) counts[r.feed_id] = (counts[r.feed_id] ?? 0) + 1;
+      return counts;
+    },
+  });
+
   async function toggleLike(feedId: string, liked: boolean) {
     const { data: { user } } = await supabase.auth.getUser();
     if (liked) {
@@ -76,13 +89,13 @@ function Feed() {
         </Link>
       )}
       {(feed ?? []).map((item: any) => (
-        <FeedItem key={item.id} item={item} likes={likeCounts?.[item.id]} onToggle={toggleLike} />
+        <FeedItem key={item.id} item={item} likes={likeCounts?.[item.id]} comments={commentCounts?.[item.id] ?? 0} onToggle={toggleLike} />
       ))}
     </div>
   );
 }
 
-function FeedItem({ item, likes, onToggle }: any) {
+function FeedItem({ item, likes, comments, onToggle }: any) {
   const [showComments, setShowComments] = useState(false);
   const p = item.profiles;
   const Icon = item.event_type === "personal_record" ? Trophy
@@ -124,7 +137,7 @@ function FeedItem({ item, likes, onToggle }: any) {
           <Heart className={`h-4 w-4 ${likes?.liked ? "fill-current" : ""}`} /> {likes?.count ?? 0}
         </button>
         <button onClick={() => setShowComments(s => !s)} className="flex items-center gap-1 text-muted-foreground">
-          <MessageCircle className="h-4 w-4" /> Kommentar
+          <MessageCircle className="h-4 w-4" /> {comments ?? 0}
         </button>
         <Link to="/feed/$id" params={{ id: item.id }} className="flex items-center gap-1 text-muted-foreground">
           Details <ChevronRight className="h-3.5 w-3.5" />
