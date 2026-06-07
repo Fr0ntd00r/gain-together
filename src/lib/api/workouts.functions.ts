@@ -56,15 +56,33 @@ export const startWorkout = createServerFn({ method: "POST" })
       user_id: userId, name, template_id: templateId, started_at: now, last_resumed_at: now,
     }).select("id").single();
     if (error || !w) throw new Error(error?.message ?? "Konnte Workout nicht starten");
-    // Seed empty sets from template
+    // Seed sets from template, prefilled with the user's last completed values per exercise.
     if (templateExercises.length > 0) {
+      const exIds = [...new Set(templateExercises.map((te: any) => te.exercise_id))];
+      const { data: hist } = await supabase.from("workout_sets")
+        .select("exercise_id,weight,reps,created_at")
+        .eq("user_id", userId).in("exercise_id", exIds).eq("is_completed", true)
+        .order("created_at", { ascending: false }).limit(500);
+      // Letzte Session je Übung: jüngster Trainingstag, dort das Top-Gewicht mit zugehörigen Wdh.
+      const lastByEx: Record<string, { weight: number | null; reps: number | null; day: string }> = {};
+      for (const row of (hist ?? []) as any[]) {
+        const day = new Date(row.created_at).toISOString().slice(0, 10);
+        const cur = lastByEx[row.exercise_id];
+        if (!cur) lastByEx[row.exercise_id] = { weight: row.weight, reps: row.reps, day };
+        else if (cur.day === day && Number(row.weight ?? 0) > Number(cur.weight ?? 0)) {
+          cur.weight = row.weight; cur.reps = row.reps;
+        }
+      }
       const sets: any[] = [];
       let pos = 0;
       for (const te of templateExercises) {
+        const prev = lastByEx[te.exercise_id];
         for (let s = 1; s <= (te.target_sets ?? 3); s++) {
           sets.push({
             workout_id: w.id, exercise_id: te.exercise_id, user_id: userId,
-            position: pos, set_number: s, reps: te.target_reps, weight: te.target_weight,
+            position: pos, set_number: s,
+            reps: prev?.reps ?? te.target_reps,
+            weight: prev?.weight ?? te.target_weight,
           });
         }
         pos++;

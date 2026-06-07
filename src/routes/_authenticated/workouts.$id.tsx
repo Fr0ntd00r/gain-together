@@ -150,6 +150,18 @@ function WorkoutLive() {
     await supabase.from("workout_sets").update(patch).eq("id", s.id);
     refetchSets();
   }
+  // Ändert einen Satz und übernimmt den geänderten Wert für die noch offenen
+  // (späteren, nicht abgehakten) Sätze derselben Übung. Feldweise: Gewicht ändern
+  // überträgt nur Gewicht, Wdh ändern nur Wdh.
+  async function updateSetForward(s: Set, patch: Partial<Set>) {
+    await supabase.from("workout_sets").update(patch).eq("id", s.id);
+    const laterIds = (sets ?? [])
+      .filter(x => x.exercise_id === s.exercise_id && x.id !== s.id
+        && !x.is_completed && x.set_number > s.set_number)
+      .map(x => x.id);
+    if (laterIds.length) await supabase.from("workout_sets").update(patch).in("id", laterIds);
+    refetchSets();
+  }
   // Schlägt eine Pausenlänge vor: bevorzugt die in der Vorlage hinterlegte rest_seconds,
   // sonst nach Übungstyp (Grundübung = länger). Zwischen Übungen etwas mehr als zwischen Sätzen.
   function suggestRest(exerciseId: string, betweenSets: boolean): { seconds: number; label: string } {
@@ -223,17 +235,18 @@ function WorkoutLive() {
   async function addExercise(exerciseId: string) {
     const { data: { user } } = await supabase.auth.getUser();
     const maxPos = Math.max(-1, ...(sets ?? []).map(s => s.position));
+    // Vorschlag + letzte Werte vorab holen, um den ersten Satz vorzubefüllen.
+    let r: any = null;
+    try { r = await getSuggestion({ data: { exerciseId } }); } catch {}
+    const last = r?.lastSession;
     await supabase.from("workout_sets").insert({
       workout_id: id, exercise_id: exerciseId, user_id: user!.id,
       position: maxPos + 1, set_number: 1,
+      reps: last?.reps ?? null, weight: last?.weight ?? null,
     });
     setShowAdd(false); setSearch("");
+    if (r?.suggestion) setSuggestions(s => ({ ...s, [exerciseId]: r }));
     refetchSets();
-    // load progression suggestion
-    try {
-      const r = await getSuggestion({ data: { exerciseId } });
-      if (r.suggestion) setSuggestions(s => ({ ...s, [exerciseId]: r }));
-    } catch {}
   }
 
   async function loadSuggestionsForExisting() {
@@ -376,11 +389,11 @@ function WorkoutLive() {
               {exSets.map(s => (
                 <div key={s.id} className={`grid grid-cols-[28px_1fr_1fr_44px_36px] items-center gap-2 rounded-lg px-1 py-1 ${s.is_completed ? "bg-success/10" : ""}`}>
                   <div className="text-sm font-bold">{s.set_number}</div>
-                  <input type="number" inputMode="decimal" defaultValue={s.weight ?? ""}
-                    onBlur={(e) => updateSet(s, { weight: e.target.value ? Number(e.target.value) : null })}
+                  <input key={`w-${s.id}-${s.weight ?? ""}`} type="number" inputMode="decimal" defaultValue={s.weight ?? ""}
+                    onBlur={(e) => updateSetForward(s, { weight: e.target.value ? Number(e.target.value) : null })}
                     className="w-full rounded-md border border-border bg-input px-2 py-1.5 text-sm" placeholder="0" />
-                  <input type="number" inputMode="numeric" defaultValue={s.reps ?? ""}
-                    onBlur={(e) => updateSet(s, { reps: e.target.value ? Number(e.target.value) : null })}
+                  <input key={`r-${s.id}-${s.reps ?? ""}`} type="number" inputMode="numeric" defaultValue={s.reps ?? ""}
+                    onBlur={(e) => updateSetForward(s, { reps: e.target.value ? Number(e.target.value) : null })}
                     className="w-full rounded-md border border-border bg-input px-2 py-1.5 text-sm" placeholder="0" />
                   <input type="number" step="0.5" inputMode="decimal" defaultValue={s.rpe ?? ""}
                     onBlur={(e) => updateSet(s, { rpe: e.target.value ? Number(e.target.value) : null })}
