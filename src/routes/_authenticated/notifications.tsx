@@ -55,8 +55,10 @@ function Notifications() {
 
       {(data ?? []).map((n: any) => {
         const name = n.actor?.display_name ?? n.actor?.username ?? "Jemand";
-        const verb = n.type === "like" ? "gefällt deine Aktivität" : "hat deine Aktivität kommentiert";
-        const Icon = n.type === "like" ? Heart : MessageCircle;
+        const verb = n.type === "like" ? "gefällt deine Aktivität"
+          : n.type === "comment_like" ? "gefällt dein Kommentar"
+          : "hat deine Aktivität kommentiert";
+        const Icon = n.type === "comment" ? MessageCircle : Heart;
         const body = (
           <div className={`flex items-start gap-3 rounded-2xl border border-border p-4 ${n.read_at ? "bg-card" : "bg-primary/5"}`}>
             <Avatar profile={n.actor} size={36} />
