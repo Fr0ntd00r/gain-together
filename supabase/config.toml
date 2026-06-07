@@ -1,1 +1,6 @@
 project_id = "rndyojkkeklscbjrstou"
+
+# Push-Versand wird per Database Webhook (Shared-Secret-Header) aufgerufen,
+# daher keine Supabase-JWT-Prüfung nötig.
+[functions.send-push]
+verify_jwt = false
