@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart } from "lucide-react";
+import { Heart, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
@@ -38,6 +38,12 @@ export function LikeButton({ feedId }: { feedId: string }) {
 export function Comments({ feedId }: { feedId: string }) {
   const qc = useQueryClient();
   const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const { data: meId } = useQuery({
+    queryKey: ["auth-uid"],
+    queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null,
+  });
   const { data } = useQuery({
     queryKey: ["comments", feedId],
     queryFn: async () => {
@@ -86,6 +92,19 @@ export function Comments({ feedId }: { feedId: string }) {
     await supabase.from("feed_comments").insert({ feed_id: feedId, user_id: user!.id, content: text });
     setText("");
     qc.invalidateQueries({ queryKey: ["comments", feedId] });
+    qc.invalidateQueries({ queryKey: ["feed-comment-counts"] });
+  }
+  async function saveEdit(id: string) {
+    if (!editText.trim()) return;
+    await supabase.from("feed_comments").update({ content: editText.trim() }).eq("id", id);
+    setEditingId(null); setEditText("");
+    qc.invalidateQueries({ queryKey: ["comments", feedId] });
+  }
+  async function removeComment(id: string) {
+    if (typeof window !== "undefined" && !window.confirm("Kommentar löschen?")) return;
+    await supabase.from("feed_comments").delete().eq("id", id);
+    qc.invalidateQueries({ queryKey: ["comments", feedId] });
+    qc.invalidateQueries({ queryKey: ["feed-comment-counts"] });
   }
   return (
     <div className="mt-3 space-y-3 border-t border-border pt-3">
@@ -100,11 +119,35 @@ export function Comments({ feedId }: { feedId: string }) {
               <span className="truncate text-xs font-semibold">{c.profiles?.display_name ?? `@${c.profiles?.username ?? "?"}`}</span>
               <span className="shrink-0 text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: de })}</span>
             </div>
-            <div className="break-words text-sm">{c.content}</div>
-            <button onClick={() => toggleLike(c.id, likes?.[c.id]?.liked ?? false)}
-              className={`mt-1 flex items-center gap-1 text-[11px] ${likes?.[c.id]?.liked ? "text-primary" : "text-muted-foreground"}`}>
-              <Heart className={`h-3 w-3 ${likes?.[c.id]?.liked ? "fill-current" : ""}`} /> {likes?.[c.id]?.count ?? 0}
-            </button>
+
+            {editingId === c.id ? (
+              <div className="mt-1 space-y-1">
+                <textarea value={editText} onChange={e => setEditText(e.target.value)} maxLength={500} rows={2}
+                  className="w-full rounded-lg border border-border bg-input px-2 py-1.5 text-sm" />
+                <div className="flex gap-2">
+                  <button onClick={() => saveEdit(c.id)} className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">Speichern</button>
+                  <button onClick={() => { setEditingId(null); setEditText(""); }} className="rounded-lg border border-border px-3 py-1 text-xs">Abbrechen</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="break-words text-sm">{c.content}</div>
+                <div className="mt-1 flex items-center gap-3 text-[11px]">
+                  <button onClick={() => toggleLike(c.id, likes?.[c.id]?.liked ?? false)}
+                    className={`flex items-center gap-1 ${likes?.[c.id]?.liked ? "text-primary" : "text-muted-foreground"}`}>
+                    <Heart className={`h-3 w-3 ${likes?.[c.id]?.liked ? "fill-current" : ""}`} /> {likes?.[c.id]?.count ?? 0}
+                  </button>
+                  {meId === c.user_id && (
+                    <>
+                      <button onClick={() => { setEditingId(c.id); setEditText(c.content); }}
+                        className="flex items-center gap-1 text-muted-foreground"><Pencil className="h-3 w-3" /> Bearbeiten</button>
+                      <button onClick={() => removeComment(c.id)}
+                        className="flex items-center gap-1 text-muted-foreground"><Trash2 className="h-3 w-3" /> Löschen</button>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       ))}
