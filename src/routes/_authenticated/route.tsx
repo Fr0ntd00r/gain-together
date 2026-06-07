@@ -18,6 +18,15 @@ function AuthLayout() {
   return (
     <div className="min-h-screen pb-24 md:pb-0 md:pl-64">
       <Sidebar />
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur md:hidden">
+        <Link to="/dashboard" className="flex items-center gap-2">
+          <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-primary">
+            <Dumbbell className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <span className="text-base font-bold tracking-tight">FitForge</span>
+        </Link>
+        <NotificationBell />
+      </header>
       <main className="mx-auto max-w-5xl px-4 pt-6 pb-8 md:px-8 md:pt-10">
         <Outlet />
       </main>
