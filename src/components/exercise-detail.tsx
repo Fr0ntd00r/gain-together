@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImagePlus, Pencil, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { defaultWeightIncrement } from "@/lib/progression";
 
 export type Exercise = {
   id: string; name: string; primary_muscle: string; equipment: string;
@@ -11,6 +12,7 @@ export type Exercise = {
 
 type UserNote = {
   instructions: string | null; setup_notes: string | null; tips: string | null; image_url: string | null;
+  weight_increment: number | null;
 };
 
 // Übungs-Detail mit PERSÖNLICHEN Notizen/Bildern: Die offizielle Übung bleibt unangetastet,
@@ -26,6 +28,7 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
   const [setupNotes, setSetupNotes] = useState("");
   const [tips, setTips] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null); // persönliches Bild (überschreibt offiziell)
+  const [weightIncrement, setWeightIncrement] = useState(""); // leer = Standard nach Equipment
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -34,7 +37,7 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
     let active = true;
     (async () => {
       const { data } = await supabase.from("exercise_user_notes")
-        .select("instructions,setup_notes,tips,image_url")
+        .select("instructions,setup_notes,tips,image_url,weight_increment")
         .eq("user_id", userId).eq("exercise_id", exercise.id).maybeSingle();
       if (!active) return;
       const n = (data ?? null) as UserNote | null;
@@ -43,9 +46,13 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
       setSetupNotes(n?.setup_notes ?? "");
       setTips(n?.tips ?? "");
       setImageUrl(n?.image_url ?? null);
+      setWeightIncrement(n?.weight_increment != null ? String(n.weight_increment) : "");
     })();
     return () => { active = false; };
   }, [userId, exercise.id]);
+
+  // Effektiver Gewichtsschritt: persönlicher Override, sonst Standard nach Equipment.
+  const effIncrement = note?.weight_increment != null ? note.weight_increment : defaultWeightIncrement(exercise.equipment);
 
   // Effektive Anzeige: persönlicher Wert, sonst offizieller.
   const effImage = imageUrl || exercise.image_url;
@@ -72,6 +79,12 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
 
   async function save() {
     if (!userId) return;
+    const incTrim = weightIncrement.trim().replace(",", ".");
+    const incNum = incTrim === "" ? null : Number(incTrim);
+    if (incNum != null && (Number.isNaN(incNum) || incNum < 0)) {
+      toast.error("Gewichtsschritt muss eine Zahl ≥ 0 sein");
+      return;
+    }
     setSaving(true);
     try {
       const { error } = await supabase.from("exercise_user_notes").upsert({
@@ -80,9 +93,10 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
         setup_notes: setupNotes || null,
         tips: tips || null,
         image_url: imageUrl,
+        weight_increment: incNum,
       }, { onConflict: "user_id,exercise_id" });
       if (error) throw error;
-      setNote({ instructions: instructions || null, setup_notes: setupNotes || null, tips: tips || null, image_url: imageUrl });
+      setNote({ instructions: instructions || null, setup_notes: setupNotes || null, tips: tips || null, image_url: imageUrl, weight_increment: incNum });
       toast.success("Gespeichert");
       onSaved();
     } catch (e: any) {
@@ -141,6 +155,14 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
               <Field label="Ausführung" value={instructions} onChange={setInstructions} placeholder={exercise.instructions ?? "Wie wird die Übung korrekt ausgeführt?"} />
               <Field label="Maschinen-Einstellung / Setup" value={setupNotes} onChange={setSetupNotes} placeholder={exercise.setup_notes ?? "z.B. Sitzhöhe Loch 4, Polster auf Schienbeinhöhe…"} />
               <Field label="Tipps & Hinweise" value={tips} onChange={setTips} placeholder={exercise.tips ?? "z.B. Ellbogen eng am Körper, langsam senken…"} />
+              <div>
+                <label className="mb-1 block text-xs font-medium text-muted-foreground">Gewichtsschritt für Progression (kg)</label>
+                <input type="number" inputMode="decimal" step="0.5" min="0" value={weightIncrement}
+                  onChange={e => setWeightIncrement(e.target.value)}
+                  placeholder={`Standard: ${defaultWeightIncrement(exercise.equipment)} kg`}
+                  className="w-full rounded-xl border border-border bg-input px-3 py-2 text-sm" />
+                <p className="mt-1 text-[11px] text-muted-foreground">Leer = Standard nach Equipment. 0 = Fortschritt nur über Wiederholungen.</p>
+              </div>
               <div className="flex gap-2 pt-1">
                 <button onClick={save} disabled={saving || uploading} className="flex-1 rounded-xl bg-primary py-2.5 font-medium text-primary-foreground disabled:opacity-60">
                   {saving ? "Speichert…" : "Speichern"}
@@ -153,6 +175,13 @@ export function ExerciseDetail({ exercise, userId, editing, onEdit, onClose, onS
               <Section title="Ausführung" content={effInstr} />
               <Section title="Maschinen-Einstellung / Setup" content={effSetup} />
               <Section title="Tipps & Hinweise" content={effTips} />
+              <div>
+                <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Gewichtsschritt</div>
+                <p className="text-sm">
+                  {effIncrement > 0 ? `+${effIncrement} kg pro Steigerung` : "Fortschritt über Wiederholungen"}
+                  {note?.weight_increment == null && <span className="text-muted-foreground"> (Standard)</span>}
+                </p>
+              </div>
               {!effInstr && !effSetup && !effTips && (
                 <div className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
                   Noch keine Hinweise. Klicke auf „Bearbeiten" um eigene hinzuzufügen.

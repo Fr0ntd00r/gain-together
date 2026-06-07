@@ -167,6 +167,7 @@ export type Database = {
           tips: string | null
           updated_at: string
           user_id: string
+          weight_increment: number | null
         }
         Insert: {
           created_at?: string
@@ -178,6 +179,7 @@ export type Database = {
           tips?: string | null
           updated_at?: string
           user_id: string
+          weight_increment?: number | null
         }
         Update: {
           created_at?: string
@@ -189,6 +191,7 @@ export type Database = {
           tips?: string | null
           updated_at?: string
           user_id?: string
+          weight_increment?: number | null
         }
         Relationships: [
           {
