@@ -16,6 +16,7 @@ import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedFriendsRouteImport } from './routes/_authenticated/friends'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
@@ -60,6 +61,12 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -116,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/feed': typeof AuthenticatedFeedRouteWithChildren
   '/friends': typeof AuthenticatedFriendsRoute
   '/history': typeof AuthenticatedHistoryRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/schedule': typeof AuthenticatedScheduleRoute
@@ -133,6 +141,7 @@ export interface FileRoutesByTo {
   '/feed': typeof AuthenticatedFeedRouteWithChildren
   '/friends': typeof AuthenticatedFriendsRoute
   '/history': typeof AuthenticatedHistoryRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/schedule': typeof AuthenticatedScheduleRoute
@@ -152,6 +161,7 @@ export interface FileRoutesById {
   '/_authenticated/feed': typeof AuthenticatedFeedRouteWithChildren
   '/_authenticated/friends': typeof AuthenticatedFriendsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/friends'
     | '/history'
+    | '/notifications'
     | '/profile'
     | '/progress'
     | '/schedule'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/friends'
     | '/history'
+    | '/notifications'
     | '/profile'
     | '/progress'
     | '/schedule'
@@ -206,6 +218,7 @@ export interface FileRouteTypes {
     | '/_authenticated/feed'
     | '/_authenticated/friends'
     | '/_authenticated/history'
+    | '/_authenticated/notifications'
     | '/_authenticated/profile'
     | '/_authenticated/progress'
     | '/_authenticated/schedule'
@@ -270,6 +283,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/history': {
@@ -356,6 +376,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRouteWithChildren
   AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
@@ -371,6 +392,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedRoute: AuthenticatedFeedRouteWithChildren,
   AuthenticatedFriendsRoute: AuthenticatedFriendsRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,

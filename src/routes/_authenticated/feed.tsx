@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
 import { useState } from "react";
 import { Comments } from "@/components/feed-social";
+import { NotificationBell } from "@/components/notification-bell";
 
 export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({ meta: [{ title: "Feed — FitForge" }] }),
@@ -61,9 +62,12 @@ function Feed() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-3xl font-extrabold tracking-tight">Feed</h1>
-        <Link to="/friends" className="flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium">
-          <Users className="h-4 w-4" /> Freunde
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <NotificationBell />
+          <Link to="/friends" className="flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium">
+            <Users className="h-4 w-4" /> Freunde
+          </Link>
+        </div>
       </div>
       {(feed ?? []).length === 0 && (
         <Link to="/friends" className="block rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground hover:border-primary">

@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/re
 import { supabase } from "@/integrations/supabase/client";
 import { Home, Dumbbell, BarChart3, Users, Trophy, User, LogOut, BookOpen, Activity, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { NotificationBell } from "@/components/notification-bell";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -87,10 +88,13 @@ function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-border bg-sidebar p-4 md:flex md:flex-col">
-      <Link to="/dashboard" className="flex items-center gap-2 px-2 py-2">
-        <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary"><Dumbbell className="h-5 w-5 text-primary-foreground" /></div>
-        <span className="text-lg font-bold tracking-tight">FitForge</span>
-      </Link>
+      <div className="flex items-center justify-between gap-2 px-2 py-2">
+        <Link to="/dashboard" className="flex items-center gap-2">
+          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary"><Dumbbell className="h-5 w-5 text-primary-foreground" /></div>
+          <span className="text-lg font-bold tracking-tight">FitForge</span>
+        </Link>
+        <NotificationBell />
+      </div>
       <nav className="mt-6 flex-1 space-y-1">
         {desktopItems.map(({ to, icon: Icon, label }) => (
           <Link key={to} to={to}
