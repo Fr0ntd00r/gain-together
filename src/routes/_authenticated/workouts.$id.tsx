@@ -201,6 +201,13 @@ function WorkoutLive() {
     startRest(seconds, label);
   }
   async function deleteSet(s: Set) { await supabase.from("workout_sets").delete().eq("id", s.id); refetchSets(); }
+  async function removeLastSet(exerciseId: string) {
+    const exSets = (sets ?? []).filter(x => x.exercise_id === exerciseId);
+    if (exSets.length <= 1) return; // mind. 1 Satz behalten – ganze Übung via Papierkorb entfernen
+    const last = exSets[exSets.length - 1];
+    await supabase.from("workout_sets").delete().eq("id", last.id);
+    refetchSets();
+  }
   async function addSet(exerciseId: string) {
     const { data: { user } } = await supabase.auth.getUser();
     const exSets = (sets ?? []).filter(x => x.exercise_id === exerciseId);
@@ -387,7 +394,10 @@ function WorkoutLive() {
             </div>
             <div className="mt-2 flex gap-2">
               <button onClick={() => addSet(exerciseId)} className="flex-1 rounded-lg border border-border bg-muted py-2 text-xs font-medium">+ Satz</button>
-              <button onClick={() => exSets.forEach(deleteSet)} className="rounded-lg border border-border px-3 py-2 text-muted-foreground"><Trash2 className="h-3.5 w-3.5" /></button>
+              <button onClick={() => removeLastSet(exerciseId)} disabled={exSets.length <= 1}
+                className="flex-1 rounded-lg border border-border bg-muted py-2 text-xs font-medium disabled:opacity-40">− Satz</button>
+              <button onClick={() => exSets.forEach(deleteSet)} title="Übung entfernen"
+                className="rounded-lg border border-border px-3 py-2 text-muted-foreground"><Trash2 className="h-3.5 w-3.5" /></button>
             </div>
           </div>
         );
