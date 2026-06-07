@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { formatDuration } from "@/lib/workout-timer";
 import { LikeButton, Comments } from "@/components/feed-social";
 
-export const Route = createFileRoute("/_authenticated/feed/$id")({
+export const Route = createFileRoute("/_authenticated/feed_/$id")({
   head: () => ({ meta: [{ title: "Aktivität — FitForge" }] }),
   component: FeedDetail,
 });
