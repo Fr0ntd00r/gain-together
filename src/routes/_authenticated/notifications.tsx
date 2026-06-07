@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Bell } from "lucide-react";
+import { Heart, MessageCircle, Bell, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
 import { Avatar } from "@/components/feed-social";
@@ -57,8 +57,12 @@ function Notifications() {
         const name = n.actor?.display_name ?? n.actor?.username ?? "Jemand";
         const verb = n.type === "like" ? "gefällt deine Aktivität"
           : n.type === "comment_like" ? "gefällt dein Kommentar"
+          : n.type === "reply" ? "hat auf deinen Kommentar geantwortet"
+          : n.type === "friend_request" ? "möchte dich als Freund hinzufügen"
+          : n.type === "friend_accept" ? "hat deine Freundschaftsanfrage angenommen"
           : "hat deine Aktivität kommentiert";
-        const Icon = n.type === "comment" ? MessageCircle : Heart;
+        const isFriend = n.type === "friend_request" || n.type === "friend_accept";
+        const Icon = isFriend ? Users : (n.type === "comment" || n.type === "reply") ? MessageCircle : Heart;
         const body = (
           <div className={`flex items-start gap-3 rounded-2xl border border-border p-4 ${n.read_at ? "bg-card" : "bg-primary/5"}`}>
             <Avatar profile={n.actor} size={36} />
@@ -72,6 +76,7 @@ function Notifications() {
             {!n.read_at && <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />}
           </div>
         );
+        if (isFriend) return <Link key={n.id} to="/friends">{body}</Link>;
         return n.feed_id
           ? <Link key={n.id} to="/feed/$id" params={{ id: n.feed_id }}>{body}</Link>
           : <div key={n.id}>{body}</div>;
