@@ -239,32 +239,67 @@ async function updateChallengeProgress(supabase: any, supabaseAdmin: any, userId
   }
 }
 
-// Progression suggestions for an exercise based on last sessions
+// Sinnvolle Gewichtssteigerung je Übung – abhängig vom Equipment (nicht überall sind 2,5 kg möglich).
+function weightIncrement(equipment: string | null | undefined): number {
+  switch (equipment) {
+    case "barbell": return 2.5;   // kleinste Scheibenpaarung
+    case "dumbbell": return 2;    // typischer Kurzhantelsprung
+    case "machine": return 5;     // Steckgewichte springen meist in 5er-Schritten
+    case "cable": return 2.5;
+    case "kettlebell": return 4;  // Kettlebells springen in ~4 kg
+    case "bodyweight":
+    case "bands":
+    case "cardio_machine": return 0; // Fortschritt über Wiederholungen
+    default: return 2.5;
+  }
+}
+// Wiederholungs-Zielkorridor für die Doppelprogression.
+function repRange(isCompound: boolean | null | undefined, inc: number): { min: number; max: number } {
+  if (inc === 0) return { min: 8, max: 20 };          // Körpergewicht/Bänder: über Wdh progressieren
+  return isCompound ? { min: 6, max: 10 } : { min: 10, max: 15 };
+}
+
+// Progression suggestions for an exercise based on last sessions (Doppelprogression: erst Wdh, dann Gewicht).
 export const getProgressionSuggestion = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { exerciseId: string }) => z.object({ exerciseId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: ex } = await supabase.from("exercises").select("is_compound").eq("id", data.exerciseId).maybeSingle();
+    const { data: ex } = await supabase.from("exercises").select("is_compound,equipment").eq("id", data.exerciseId).maybeSingle();
     const { data: sets } = await supabase.from("workout_sets").select("weight,reps,is_completed,created_at")
       .eq("user_id", userId).eq("exercise_id", data.exerciseId).eq("is_completed", true)
-      .order("created_at", { ascending: false }).limit(20);
+      .order("created_at", { ascending: false }).limit(30);
     const recent = sets ?? [];
     if (recent.length === 0) return { suggestion: null };
-    // Last session = sets within most recent date
+    // Letzte Session = Sätze des jüngsten Trainingstags; Arbeitssätze = die mit dem Top-Gewicht.
     const lastDay = new Date(recent[0].created_at).toISOString().slice(0, 10);
     const lastSession = recent.filter(s => new Date(s.created_at).toISOString().slice(0, 10) === lastDay);
     const topWeight = Math.max(...lastSession.map((s: any) => Number(s.weight ?? 0)));
-    const targetReps = Math.max(...lastSession.map((s: any) => Number(s.reps ?? 0)));
-    const allHitTarget = lastSession.every((s: any) => Number(s.reps ?? 0) >= targetReps);
-    const inc = ex?.is_compound ? 2.5 : 1;
+    const workingSets = lastSession.filter((s: any) => Number(s.weight ?? 0) === topWeight);
+    const minReps = Math.min(...workingSets.map((s: any) => Number(s.reps ?? 0)));
+    const maxReps = Math.max(...workingSets.map((s: any) => Number(s.reps ?? 0)));
+
+    const inc = weightIncrement(ex?.equipment);
+    const range = repRange(ex?.is_compound, inc);
+    const nextWeight = Number((topWeight + inc).toFixed(2));
+    const atTop = minReps >= range.max; // alle Arbeitssätze haben das obere Ende des Wdh-Bereichs erreicht
+
     let recommendation: { action: string; weight: number; reps: number; text: string };
-    if (allHitTarget && lastSession.length >= 3) {
-      recommendation = { action: "increase_weight", weight: topWeight + inc, reps: targetReps,
-        text: `Top! Probier' ${topWeight + inc} kg × ${targetReps} Wdh beim nächsten Mal.` };
+    if (inc === 0) {
+      // Körpergewicht/Bänder: ausschließlich über Wiederholungen steigern.
+      recommendation = atTop
+        ? { action: "add_resistance", weight: topWeight, reps: range.min,
+            text: `Alle Sätze ≥ ${range.max} Wdh – Zeit für Zusatzgewicht oder eine schwerere Variante, dann wieder ${range.min} Wdh.` }
+        : { action: "increase_reps", weight: topWeight, reps: minReps + 1,
+            text: `Ziel: ${minReps + 1} Wdh in jedem Satz (Bereich ${range.min}–${range.max}).` };
+    } else if (atTop) {
+      // Oberes Ende erreicht -> Gewicht erhöhen und unten im Wdh-Bereich neu starten.
+      recommendation = { action: "increase_weight", weight: nextWeight, reps: range.min,
+        text: `Stark! Alle Sätze ≥ ${range.max} Wdh → erhöhe auf ${nextWeight} kg und starte wieder bei ${range.min} Wdh.` };
     } else {
-      recommendation = { action: "same_weight", weight: topWeight, reps: targetReps + 1,
-        text: `Bleib bei ${topWeight} kg, ziel auf ${targetReps + 1} Wdh.` };
+      // Gewicht halten, eine Wiederholung drauflegen (bis zum oberen Ende).
+      recommendation = { action: "increase_reps", weight: topWeight, reps: minReps + 1,
+        text: `Bleib bei ${topWeight} kg und schaff ${minReps + 1} Wdh pro Satz (Ziel ${range.max}, danach +${inc} kg).` };
     }
-    return { suggestion: recommendation, lastSession: { weight: topWeight, reps: targetReps, sets: lastSession.length } };
+    return { suggestion: recommendation, lastSession: { weight: topWeight, reps: maxReps, sets: lastSession.length } };
   });
