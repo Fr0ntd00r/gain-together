@@ -53,6 +53,32 @@ export function Comments({ feedId }: { feedId: string }) {
       return list.map((c: any) => ({ ...c, profiles: byId[c.user_id] }));
     },
   });
+  const commentIds = (data ?? []).map((c: any) => c.id);
+  const { data: likes } = useQuery({
+    queryKey: ["comment-likes", feedId, commentIds.join(",")],
+    enabled: commentIds.length > 0,
+    queryFn: async () => {
+      const { data: rows } = await supabase.from("comment_likes").select("comment_id,user_id").in("comment_id", commentIds);
+      const { data: { user } } = await supabase.auth.getUser();
+      const map: Record<string, { count: number; liked: boolean }> = {};
+      for (const id of commentIds) map[id] = { count: 0, liked: false };
+      for (const r of rows ?? []) {
+        if (!map[r.comment_id]) map[r.comment_id] = { count: 0, liked: false };
+        map[r.comment_id].count++;
+        if (r.user_id === user?.id) map[r.comment_id].liked = true;
+      }
+      return map;
+    },
+  });
+
+  async function toggleLike(commentId: string, liked: boolean) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    if (liked) await supabase.from("comment_likes").delete().eq("comment_id", commentId).eq("user_id", user.id);
+    else await supabase.from("comment_likes").insert({ comment_id: commentId, user_id: user.id });
+    qc.invalidateQueries({ queryKey: ["comment-likes", feedId] });
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!text.trim()) return;
@@ -75,6 +101,10 @@ export function Comments({ feedId }: { feedId: string }) {
               <span className="shrink-0 text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: de })}</span>
             </div>
             <div className="break-words text-sm">{c.content}</div>
+            <button onClick={() => toggleLike(c.id, likes?.[c.id]?.liked ?? false)}
+              className={`mt-1 flex items-center gap-1 text-[11px] ${likes?.[c.id]?.liked ? "text-primary" : "text-muted-foreground"}`}>
+              <Heart className={`h-3 w-3 ${likes?.[c.id]?.liked ? "fill-current" : ""}`} /> {likes?.[c.id]?.count ?? 0}
+            </button>
           </div>
         </div>
       ))}
