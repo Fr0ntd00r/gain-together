@@ -24,6 +24,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedChallengesRouteImport } from './routes/_authenticated/challenges'
 import { Route as AuthenticatedWorkoutsNewRouteImport } from './routes/_authenticated/workouts.new'
 import { Route as AuthenticatedWorkoutsIdRouteImport } from './routes/_authenticated/workouts.$id'
+import { Route as AuthenticatedFeedIdRouteImport } from './routes/_authenticated/feed.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -100,6 +101,11 @@ const AuthenticatedWorkoutsIdRoute = AuthenticatedWorkoutsIdRouteImport.update({
   path: '/workouts/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFeedIdRoute = AuthenticatedFeedIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedFeedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -107,13 +113,14 @@ export interface FileRoutesByFullPath {
   '/challenges': typeof AuthenticatedChallengesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRoute
-  '/feed': typeof AuthenticatedFeedRoute
+  '/feed': typeof AuthenticatedFeedRouteWithChildren
   '/friends': typeof AuthenticatedFriendsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/templates': typeof AuthenticatedTemplatesRoute
+  '/feed/$id': typeof AuthenticatedFeedIdRoute
   '/workouts/$id': typeof AuthenticatedWorkoutsIdRoute
   '/workouts/new': typeof AuthenticatedWorkoutsNewRoute
 }
@@ -123,13 +130,14 @@ export interface FileRoutesByTo {
   '/challenges': typeof AuthenticatedChallengesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exercises': typeof AuthenticatedExercisesRoute
-  '/feed': typeof AuthenticatedFeedRoute
+  '/feed': typeof AuthenticatedFeedRouteWithChildren
   '/friends': typeof AuthenticatedFriendsRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/templates': typeof AuthenticatedTemplatesRoute
+  '/feed/$id': typeof AuthenticatedFeedIdRoute
   '/workouts/$id': typeof AuthenticatedWorkoutsIdRoute
   '/workouts/new': typeof AuthenticatedWorkoutsNewRoute
 }
@@ -141,13 +149,14 @@ export interface FileRoutesById {
   '/_authenticated/challenges': typeof AuthenticatedChallengesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exercises': typeof AuthenticatedExercisesRoute
-  '/_authenticated/feed': typeof AuthenticatedFeedRoute
+  '/_authenticated/feed': typeof AuthenticatedFeedRouteWithChildren
   '/_authenticated/friends': typeof AuthenticatedFriendsRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
+  '/_authenticated/feed/$id': typeof AuthenticatedFeedIdRoute
   '/_authenticated/workouts/$id': typeof AuthenticatedWorkoutsIdRoute
   '/_authenticated/workouts/new': typeof AuthenticatedWorkoutsNewRoute
 }
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/schedule'
     | '/templates'
+    | '/feed/$id'
     | '/workouts/$id'
     | '/workouts/new'
   fileRoutesByTo: FileRoutesByTo
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/schedule'
     | '/templates'
+    | '/feed/$id'
     | '/workouts/$id'
     | '/workouts/new'
   id:
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/_authenticated/progress'
     | '/_authenticated/schedule'
     | '/_authenticated/templates'
+    | '/_authenticated/feed/$id'
     | '/_authenticated/workouts/$id'
     | '/_authenticated/workouts/new'
   fileRoutesById: FileRoutesById
@@ -316,14 +328,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkoutsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/feed/$id': {
+      id: '/_authenticated/feed/$id'
+      path: '/$id'
+      fullPath: '/feed/$id'
+      preLoaderRoute: typeof AuthenticatedFeedIdRouteImport
+      parentRoute: typeof AuthenticatedFeedRoute
+    }
   }
 }
+
+interface AuthenticatedFeedRouteChildren {
+  AuthenticatedFeedIdRoute: typeof AuthenticatedFeedIdRoute
+}
+
+const AuthenticatedFeedRouteChildren: AuthenticatedFeedRouteChildren = {
+  AuthenticatedFeedIdRoute: AuthenticatedFeedIdRoute,
+}
+
+const AuthenticatedFeedRouteWithChildren =
+  AuthenticatedFeedRoute._addFileChildren(AuthenticatedFeedRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedChallengesRoute: typeof AuthenticatedChallengesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExercisesRoute: typeof AuthenticatedExercisesRoute
-  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
+  AuthenticatedFeedRoute: typeof AuthenticatedFeedRouteWithChildren
   AuthenticatedFriendsRoute: typeof AuthenticatedFriendsRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -338,7 +368,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChallengesRoute: AuthenticatedChallengesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExercisesRoute: AuthenticatedExercisesRoute,
-  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
+  AuthenticatedFeedRoute: AuthenticatedFeedRouteWithChildren,
   AuthenticatedFriendsRoute: AuthenticatedFriendsRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,

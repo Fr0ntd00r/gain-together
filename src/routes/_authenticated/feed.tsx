@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Trophy, Dumbbell, Award, Flame, Users } from "lucide-react";
+import { Heart, MessageCircle, Trophy, Dumbbell, Award, Flame, Users, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
 import { useState } from "react";
+import { Comments } from "@/components/feed-social";
 
 export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({ meta: [{ title: "Feed — FitForge" }] }),
@@ -102,7 +103,7 @@ function FeedItem({ item, likes, onToggle }: any) {
 
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
-      <div className="flex items-start gap-3">
+      <Link to="/feed/$id" params={{ id: item.id }} className="flex items-start gap-3">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/15">
           <Icon className="h-5 w-5 text-primary" />
         </div>
@@ -110,58 +111,22 @@ function FeedItem({ item, likes, onToggle }: any) {
           <div className="text-sm font-semibold">{title}</div>
           {body && <div className="text-sm text-muted-foreground">{body}</div>}
           <div className="mt-1 text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: de })}</div>
-          <div className="mt-3 flex gap-4 text-xs">
-            <button onClick={() => onToggle(item.id, likes?.liked ?? false)}
-              className={`flex items-center gap-1 ${likes?.liked ? "text-primary" : "text-muted-foreground"}`}>
-              <Heart className={`h-4 w-4 ${likes?.liked ? "fill-current" : ""}`} /> {likes?.count ?? 0}
-            </button>
-            <button onClick={() => setShowComments(s => !s)} className="flex items-center gap-1 text-muted-foreground">
-              <MessageCircle className="h-4 w-4" /> Kommentar
-            </button>
-          </div>
-          {showComments && <Comments feedId={item.id} />}
         </div>
+        <ChevronRight className="h-4 w-4 shrink-0 self-center text-muted-foreground" />
+      </Link>
+      <div className="mt-3 flex gap-4 text-xs">
+        <button onClick={() => onToggle(item.id, likes?.liked ?? false)}
+          className={`flex items-center gap-1 ${likes?.liked ? "text-primary" : "text-muted-foreground"}`}>
+          <Heart className={`h-4 w-4 ${likes?.liked ? "fill-current" : ""}`} /> {likes?.count ?? 0}
+        </button>
+        <button onClick={() => setShowComments(s => !s)} className="flex items-center gap-1 text-muted-foreground">
+          <MessageCircle className="h-4 w-4" /> Kommentar
+        </button>
+        <Link to="/feed/$id" params={{ id: item.id }} className="flex items-center gap-1 text-muted-foreground">
+          Details <ChevronRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
-    </div>
-  );
-}
-
-function Comments({ feedId }: { feedId: string }) {
-  const qc = useQueryClient();
-  const [text, setText] = useState("");
-  const { data } = useQuery({
-    queryKey: ["comments", feedId],
-    queryFn: async () => {
-      const { data: rows } = await supabase.from("feed_comments").select("*")
-        .eq("feed_id", feedId).order("created_at");
-      const list = rows ?? [];
-      const ids = Array.from(new Set(list.map((c: any) => c.user_id)));
-      let byId: Record<string, any> = {};
-      if (ids.length) {
-        const { data: profs } = await supabase.from("profiles").select("id,username,display_name").in("id", ids);
-        byId = Object.fromEntries((profs ?? []).map((p: any) => [p.id, p]));
-      }
-      return list.map((c: any) => ({ ...c, profiles: byId[c.user_id] }));
-    },
-  });
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!text.trim()) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("feed_comments").insert({ feed_id: feedId, user_id: user!.id, content: text });
-    setText("");
-    qc.invalidateQueries({ queryKey: ["comments", feedId] });
-  }
-  return (
-    <div className="mt-3 space-y-2 border-t border-border pt-3">
-      {(data ?? []).map((c: any) => (
-        <div key={c.id} className="text-xs"><span className="font-medium">@{c.profiles?.username}</span> {c.content}</div>
-      ))}
-      <form onSubmit={submit} className="flex gap-2">
-        <input value={text} onChange={e => setText(e.target.value)} maxLength={500} placeholder="Kommentieren…"
-          className="flex-1 rounded-lg border border-border bg-input px-3 py-1.5 text-xs" />
-        <button type="submit" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">Senden</button>
-      </form>
+      {showComments && <Comments feedId={item.id} />}
     </div>
   );
 }
