@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { defaultWeightIncrement, repRange } from "@/lib/progression";
 
 // Get dashboard summary: recent workouts, PR count, streak, today's workouts
 export const getDashboard = createServerFn({ method: "GET" })
@@ -239,26 +240,6 @@ async function updateChallengeProgress(supabase: any, supabaseAdmin: any, userId
   }
 }
 
-// Sinnvolle Gewichtssteigerung je Übung – abhängig vom Equipment (nicht überall sind 2,5 kg möglich).
-function weightIncrement(equipment: string | null | undefined): number {
-  switch (equipment) {
-    case "barbell": return 2.5;   // kleinste Scheibenpaarung
-    case "dumbbell": return 2;    // typischer Kurzhantelsprung
-    case "machine": return 5;     // Steckgewichte springen meist in 5er-Schritten
-    case "cable": return 2.5;
-    case "kettlebell": return 4;  // Kettlebells springen in ~4 kg
-    case "bodyweight":
-    case "bands":
-    case "cardio_machine": return 0; // Fortschritt über Wiederholungen
-    default: return 2.5;
-  }
-}
-// Wiederholungs-Zielkorridor für die Doppelprogression.
-function repRange(isCompound: boolean | null | undefined, inc: number): { min: number; max: number } {
-  if (inc === 0) return { min: 8, max: 20 };          // Körpergewicht/Bänder: über Wdh progressieren
-  return isCompound ? { min: 6, max: 10 } : { min: 10, max: 15 };
-}
-
 // Progression suggestions for an exercise based on last sessions (Doppelprogression: erst Wdh, dann Gewicht).
 export const getProgressionSuggestion = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -266,6 +247,9 @@ export const getProgressionSuggestion = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: ex } = await supabase.from("exercises").select("is_compound,equipment").eq("id", data.exerciseId).maybeSingle();
+    // Persönlicher Override des Gewichtsschritts (falls gesetzt), sonst Standard nach Equipment.
+    const { data: noteOv } = await supabase.from("exercise_user_notes")
+      .select("weight_increment").eq("user_id", userId).eq("exercise_id", data.exerciseId).maybeSingle();
     const { data: sets } = await supabase.from("workout_sets").select("weight,reps,is_completed,created_at")
       .eq("user_id", userId).eq("exercise_id", data.exerciseId).eq("is_completed", true)
       .order("created_at", { ascending: false }).limit(30);
@@ -279,7 +263,7 @@ export const getProgressionSuggestion = createServerFn({ method: "POST" })
     const minReps = Math.min(...workingSets.map((s: any) => Number(s.reps ?? 0)));
     const maxReps = Math.max(...workingSets.map((s: any) => Number(s.reps ?? 0)));
 
-    const inc = weightIncrement(ex?.equipment);
+    const inc = noteOv?.weight_increment != null ? Number(noteOv.weight_increment) : defaultWeightIncrement(ex?.equipment);
     const range = repRange(ex?.is_compound, inc);
     const nextWeight = Number((topWeight + inc).toFixed(2));
     const atTop = minReps >= range.max; // alle Arbeitssätze haben das obere Ende des Wdh-Bereichs erreicht
