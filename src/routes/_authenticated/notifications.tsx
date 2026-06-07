@@ -6,6 +6,7 @@ import { Heart, MessageCircle, Bell, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { de } from "date-fns/locale";
 import { Avatar } from "@/components/feed-social";
+import { PushToggle } from "@/components/push-toggle";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({ meta: [{ title: "Mitteilungen — FitForge" }] }),
@@ -44,6 +45,10 @@ function Notifications() {
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-extrabold tracking-tight">Mitteilungen</h1>
+
+      <PushToggle />
+
+
 
       {isLoading && <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">Lädt…</div>}
       {!isLoading && (data ?? []).length === 0 && (
