@@ -9,13 +9,18 @@
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY") ?? "";
+// Fallback auf den im Client/.env hinterlegten Public Key, falls das Edge-Secret fehlt.
+const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY")
+  || "BGAhb_BbMynC3j_MKsKzHMbAphsKe0SXagUCBA9lwxmvdwKYJAMteL7RTj6f8EAuYnLiQ9WRSfryEZrLM51xVng";
 const VAPID_PRIVATE = Deno.env.get("VAPID_PRIVATE_KEY") ?? "";
 const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:noreply@fitforge.app";
 const WEBHOOK_SECRET = Deno.env.get("PUSH_WEBHOOK_SECRET"); // optional, aber empfohlen
 
 if (VAPID_PUBLIC && VAPID_PRIVATE) {
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
+  console.log("[send-push] VAPID configured");
+} else {
+  console.error("[send-push] VAPID missing", { hasPublic: !!VAPID_PUBLIC, hasPrivate: !!VAPID_PRIVATE });
 }
 
 const admin = createClient(
