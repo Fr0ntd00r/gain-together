@@ -69,8 +69,10 @@ Deno.serve(async (req) => {
   const url = record.feed_id ? `/feed/${record.feed_id}` : isFriend ? "/friends" : "/notifications";
   const msg = JSON.stringify({ title: TITLE, body: bodyFor(record.type, name), url, tag: record.id });
 
-  const { data: subs } = await admin.from("push_subscriptions")
+  const { data: subs, error: subsErr } = await admin.from("push_subscriptions")
     .select("id,endpoint,p256dh,auth").eq("user_id", record.user_id);
+  if (subsErr) console.error("[send-push] subs query error", subsErr);
+  console.log("[send-push] notif", { user_id: record.user_id, type: record.type, subs: subs?.length ?? 0 });
 
   let sent = 0;
   const expired: string[] = [];
@@ -83,10 +85,12 @@ Deno.serve(async (req) => {
       sent++;
     } catch (e) {
       const code = (e?.statusCode ?? e?.status) as number | undefined;
+      console.error("[send-push] sendNotification failed", { code, message: e?.message, body: e?.body });
       if (code === 404 || code === 410) expired.push(s.id);
     }
   }
   if (expired.length) await admin.from("push_subscriptions").delete().in("id", expired);
+  console.log("[send-push] done", { sent, cleaned: expired.length });
 
   return new Response(JSON.stringify({ sent, cleaned: expired.length }), {
     headers: { "content-type": "application/json" },
