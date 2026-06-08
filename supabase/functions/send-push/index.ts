@@ -9,13 +9,18 @@
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY") ?? "";
+// Fallback auf den im Client/.env hinterlegten Public Key, falls das Edge-Secret fehlt.
+const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY")
+  || "BGAhb_BbMynC3j_MKsKzHMbAphsKe0SXagUCBA9lwxmvdwKYJAMteL7RTj6f8EAuYnLiQ9WRSfryEZrLM51xVng";
 const VAPID_PRIVATE = Deno.env.get("VAPID_PRIVATE_KEY") ?? "";
 const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:noreply@fitforge.app";
 const WEBHOOK_SECRET = Deno.env.get("PUSH_WEBHOOK_SECRET"); // optional, aber empfohlen
 
 if (VAPID_PUBLIC && VAPID_PRIVATE) {
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
+  console.log("[send-push] VAPID configured");
+} else {
+  console.error("[send-push] VAPID missing", { hasPublic: !!VAPID_PUBLIC, hasPrivate: !!VAPID_PRIVATE });
 }
 
 const admin = createClient(
@@ -64,8 +69,10 @@ Deno.serve(async (req) => {
   const url = record.feed_id ? `/feed/${record.feed_id}` : isFriend ? "/friends" : "/notifications";
   const msg = JSON.stringify({ title: TITLE, body: bodyFor(record.type, name), url, tag: record.id });
 
-  const { data: subs } = await admin.from("push_subscriptions")
+  const { data: subs, error: subsErr } = await admin.from("push_subscriptions")
     .select("id,endpoint,p256dh,auth").eq("user_id", record.user_id);
+  if (subsErr) console.error("[send-push] subs query error", subsErr);
+  console.log("[send-push] notif", { user_id: record.user_id, type: record.type, subs: subs?.length ?? 0 });
 
   let sent = 0;
   const expired: string[] = [];
@@ -78,10 +85,12 @@ Deno.serve(async (req) => {
       sent++;
     } catch (e) {
       const code = (e?.statusCode ?? e?.status) as number | undefined;
+      console.error("[send-push] sendNotification failed", { code, message: e?.message, body: e?.body });
       if (code === 404 || code === 410) expired.push(s.id);
     }
   }
   if (expired.length) await admin.from("push_subscriptions").delete().in("id", expired);
+  console.log("[send-push] done", { sent, cleaned: expired.length });
 
   return new Response(JSON.stringify({ sent, cleaned: expired.length }), {
     headers: { "content-type": "application/json" },
